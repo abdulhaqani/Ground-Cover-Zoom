@@ -2,10 +2,16 @@
 // Defining global consts for the webserver
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
+const exphbs = require('express-handlebars');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+const passport = require('passport');
+const flash = require('connect-flash');
+const session = require('express-session');
 const handlebars = require('express-handlebars').create({
   defaultLayout: 'main',
 });
-const path = require('path');
 
 // load routes
 const greenhouse = require('./routes/greenhouse');
@@ -49,12 +55,12 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
-app.post('/login', (req, res) =>{
+app.post('/login', (req, res) => {
   console.log(req.body);
 });
 
 app.post('/req-proc', (req, res) => {
-  console.log
+  console.log('bla');
 });
 // use routes
 // app.use('/greenhouse', greenhouse);
