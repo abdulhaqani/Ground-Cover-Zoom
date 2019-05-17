@@ -49,6 +49,13 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
+app.post('/login', (req, res) =>{
+  console.log(req.body);
+});
+
+app.post('/req-proc', (req, res) => {
+  console.log
+});
 // use routes
 // app.use('/greenhouse', greenhouse);
 app.use('/users', users);
