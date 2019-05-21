@@ -40,8 +40,9 @@ router.post('/register', (req, res) => {
   if (errors.length > 0) {
     res.render('users/register', {
       errors,
-      firstName: req.body.fname,
-      lastName: req.body.lname,
+      organization: req.body.organization,
+      firstName: req.body.first_name,
+      lastName: req.body.last_name,
       email: req.body.email,
       password: req.body.passwd1,
       password2: req.body.passwd2,
@@ -53,10 +54,11 @@ router.post('/register', (req, res) => {
         res.redirect('/users/register');
       } else {
         const newUser = new User({
-          fname: req.body.fname,
-          lname: req.body.lname,
+          organization: req.body.organization,
+          firstName:req.body.first_name,
+          lastName: req.body.last_name,
           email: req.body.email,
-          password: req.body.passwd,
+          password: req.body.passwd1
         });
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newUser.password, salt, (err, hash) => {

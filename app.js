@@ -22,7 +22,7 @@ require('./models/Greenhouse');
 
 // model instance
 const Green = mongoose.model('green');
-const User = mongoose.model('user');
+const User = mongoose.model('users');
 
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
