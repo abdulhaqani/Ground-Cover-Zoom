@@ -53,6 +53,10 @@ app.use(express.static('public'));
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
 
+// body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // method override middleware
 app.use(methodOverride('_method'));
 
