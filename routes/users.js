@@ -36,45 +36,46 @@ router.post('/register', (req, res) => {
   }
   if (req.body.passwd1.length < 4) {
     errors.push({ text: 'Password must be at least 4 characters' });
+  }
   if (errors.length > 0) {
     res.render('users/register', {
       errors,
       firstName: req.body.fname,
-      lastName: req.body.lname,  
+      lastName: req.body.lname,
       email: req.body.email,
       password: req.body.passwd1,
       password2: req.body.passwd2,
     });
   } else {
-  User.findOne({ email: req.body.email }).then(user => {
-    if (user) {
-      req.flash('error_msg', 'email already registered');
-      res.redirect('/users/register');
-        } else {
+    User.findOne({ email: req.body.email }).then(user => {
+      if (user) {
+        req.flash('error_msg', 'email already registered');
+        res.redirect('/users/register');
+      } else {
         const newUser = new User({
-        fname: req.body.fname,
-        lname: req.body.lname,
-        email: req.body.email,
-        password: req.body.passwd,
-      });
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-          if (err) throw err;
-          newUser.password = hash;
-          newUser
-          .save()
-          .then(() => {
-            req.flash('success_msg', 'you are now registered');
-            res.redirect('/users/login');
-          })
-          .catch(err => {
-            console.log(err);
+          fname: req.body.fname,
+          lname: req.body.lname,
+          email: req.body.email,
+          password: req.body.passwd,
+        });
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) throw err;
+            newUser.password = hash;
+            newUser
+              .save()
+              .then(() => {
+                req.flash('success_msg', 'you are now registered');
+                res.redirect('/users/login');
+              })
+              .catch(err => {
+                console.log(err);
+              });
           });
-          });
-      });
-    }
-  });
+        });
+      }
+    });
   }
-};
+});
 
 module.exports = router;

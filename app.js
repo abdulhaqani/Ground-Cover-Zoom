@@ -42,13 +42,18 @@ mongoose.connection
     console.log('connection error');
   });
 
+// handlebars middleware
 const app = express();
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
+// express middleware
 app.use(express.static('public'));
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
+
+// method override middleware
+app.use(methodOverride('_method'));
 
 // Home page routing
 app.get('/', (req, res) => {
