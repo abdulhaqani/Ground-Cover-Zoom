@@ -9,16 +9,11 @@ module.exports = function(passport) {
   passport.use(
     new LocalStrategy(
       {
+        passReqToCallback: true,
         usernameField: 'email',
       },
       (email, password, done) => {
-        User.findOne({
-          email,
-        }).then(user => {
-          if (!user) {
-            return done(null, false, { message: 'No user found' });
-          }
-        });
+        console.log(email);
       }
     )
   );

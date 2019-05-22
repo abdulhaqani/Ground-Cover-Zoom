@@ -3,7 +3,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const passport = require('passport');
@@ -16,6 +15,7 @@ const handlebars = require('express-handlebars').create({
 const app = express();
 
 // load routes
+const displayForms = require('./routes/displayForms');
 const greenhouse = require('./routes/greenhouse');
 const users = require('./routes/users');
 
@@ -70,6 +70,9 @@ app.use(
   })
 );
 
+// Flash middleware
+app.use(flash());
+
 // Global variables
 app.use(function(req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
@@ -78,8 +81,6 @@ app.use(function(req, res, next) {
   res.locals.err = req.flash('err');
   next();
 });
-// Flash middleware
-app.use(flash());
 
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -104,7 +105,7 @@ app.get('/', (req, res) => {
 });
 
 // use routes
-// app.use('/greenhouse', greenhouse);
+app.use('/displayForms', displayForms);
 app.use('/users', users);
 
 app.listen(app.get('port'), () => {
