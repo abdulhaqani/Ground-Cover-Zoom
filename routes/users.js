@@ -22,12 +22,12 @@ router.get('/register', (req, res) => {
 
 // login form post
 router.post('/login', (req, res, next) => {
-  /* passport.authenticate('local', {
+  console.log('works');
+  passport.authenticate('local', {
     successRedirect: '../home',
-    failureRedirect: '/login',
+    failureRedirect: '/users/login',
     failureFlash: true,
-  })(req, res, next); */
-  console.log('req.body.email');
+  })(req, res, next);
 });
 
 // register form post
@@ -52,8 +52,8 @@ router.post('/register', (req, res) => {
   } else {
     User.findOne({ email: req.body.email }).then(user => {
       if (user) {
-        req.flash('error_msg', 'email already registered');
         res.redirect('/users/register');
+        req.flash('error_msg', 'email already registered');
       } else {
         const newUser = new User({
           organization: req.body.organization,
