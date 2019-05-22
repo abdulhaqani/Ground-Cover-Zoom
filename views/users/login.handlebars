@@ -1,23 +1,23 @@
 <br />
 <div class="jumbotron" style="background-color: #2e5274">
-    <div class="container" style="width: 50%">
-        <form  action="/login" method="POST">
-            <div class="form-group">
-                <label style="color: white">Email Address</label>
-                <input type="text" name="email" class="form-control"required>
-                <label style="color: white">Password</label>
-                <input type="password" name="passwd" class="form-control" id="passwordInputField" required>
-            </div>
-            <div class="row">
-                <div class="col-sm-2">
-                    <button type="submit" class="btn btn-secondary">Submit</button>
-                </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-outline-light">Cancel</button>
-                </div>
-            </div>
-            <br />
-            <a href="#" style="color: white; text-decoration: underline;" >Reset Password</a>
-        </form>
-    </div>
+  <div class="container" style="width: 50%">
+    <form action="/users/login" method="POST">
+      <div class="form-group">
+        <label style="color: white">Email Address</label>
+        <input type="text" name="email" class="form-control" required>
+        <label style="color: white">Password</label>
+        <input type="password" name="passwd" class="form-control" id="passwordInputField" required>
+      </div>
+      <div class="row">
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-secondary">Submit</button>
+        </div>
+        <div class="col-sm-2">
+          <button type="button" class="btn btn-outline-light">Cancel</button>
+        </div>
+      </div>
+      <br />
+      <a href="#" style="color: white; text-decoration: underline;">Reset Password</a>
+    </form>
+  </div>
 </div>
