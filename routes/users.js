@@ -28,14 +28,15 @@ router.post('/login', (req, res, next) => {
     failureFlash: true,
   })(req, res, next);
 });
+
 // register form post
 router.post('/register', (req, res) => {
   const errors = [];
   if (req.body.passwd1 != req.body.passwd2) {
     errors.push({ text: 'Passwords do not match' });
   }
-  if (req.body.passwd1.length < 4) {
-    errors.push({ text: 'Password must be at least 4 characters' });
+  if (req.body.passwd1.length < 7) {
+    errors.push({ text: 'Password must be at least 7 characters' });
   }
   if (errors.length > 0) {
     res.render('users/register', {
