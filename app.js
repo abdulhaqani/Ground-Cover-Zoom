@@ -13,6 +13,8 @@ const handlebars = require('express-handlebars').create({
   defaultLayout: 'main',
 });
 
+const app = express();
+
 // load routes
 const greenhouse = require('./routes/greenhouse');
 const users = require('./routes/users');
@@ -43,8 +45,14 @@ mongoose.connection
     console.log('connection error');
   });
 
+// passport config
+require('./config/passport')(passport);
+
+// MIDDLEWARE
+// static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
 // handlebars middleware
-const app = express();
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
@@ -53,6 +61,26 @@ app.use(express.static('public'));
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
 
+// session middleware
+app.use(
+  session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  res.locals.err = req.flash('err');
+  next();
+});
+// Flash middleware
+app.use(flash());
+
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -60,18 +88,21 @@ app.use(bodyParser.json());
 // method override middleware
 app.use(methodOverride('_method'));
 
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  res.locals.err = req.flash('err');
+  next();
+});
+
+// ROUTING
 // Home page routing
 app.get('/', (req, res) => {
   res.render('home');
 });
 
-app.post('/login', (req, res) => {
-  console.log(req.body);
-});
-
-app.post('/req-proc', (req, res) => {
-  console.log('bla');
-});
 // use routes
 // app.use('/greenhouse', greenhouse);
 app.use('/users', users);
