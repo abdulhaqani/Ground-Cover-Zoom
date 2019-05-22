@@ -21,6 +21,8 @@ const users = require('./routes/users');
 
 // require models
 require('./models/Greenhouse');
+require('./models/Users');
+require('./models/DisplayForms');
 
 // model instance
 const Green = mongoose.model('green');

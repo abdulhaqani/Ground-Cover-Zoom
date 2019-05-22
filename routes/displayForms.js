@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
     };
     new DisplayForms(newUser).save().then(() => {
       req.flash('success_msg', 'displayForms added');
-      res.redirect('/');
+      res.redirect('/displayForms');
     });
   }
 });
@@ -72,7 +72,7 @@ router.put('/:id', (req, res) => {
 
     displayForms.save().then(() => {
       req.flash('success_msg', 'displayForms updated');
-      res.redirect('/');
+      res.redirect('/displayForms');
     });
   });
 });
