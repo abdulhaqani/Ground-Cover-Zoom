@@ -8,7 +8,6 @@ const { Schema } = mongoose;
  * fields are First and Lastname.
  */
 const UserSchema = new Schema({
-
   organization: {
     type: String,
     require: true,
