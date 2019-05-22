@@ -13,7 +13,14 @@ module.exports = function(passport) {
         usernameField: 'email',
       },
       (email, password, done) => {
-        console.log(email);
+        // match correct user
+        User.findOne({ email }).then(user => {
+          if (!user) {
+            return done(null, false, { message: 'No user found' });
+          }
+        });
+
+        // match correct password
       }
     )
   );
