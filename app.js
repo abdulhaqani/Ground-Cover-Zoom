@@ -25,6 +25,7 @@ require('./models/Users');
 require('./models/DisplayForms');
 
 // model instance
+const Display = mongoose.model('displayForms');
 const Green = mongoose.model('green');
 const User = mongoose.model('users');
 
@@ -97,6 +98,7 @@ app.use(function(req, res, next) {
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
   res.locals.err = req.flash('err');
+  res.locals.user = req.user || null;
   next();
 });
 
