@@ -22,10 +22,10 @@ router.get('/register', (req, res) => {
 
 // login form post
 router.post('/login', (req, res, next) => {
-  console.log('works');
   passport.authenticate('local', {
-    successRedirect: '../home',
+    successRedirect: '/displayForms',
     failureRedirect: '/users/login',
+    failureMessage: 'incorrect email or password',
     failureFlash: true,
   })(req, res, next);
 });
@@ -69,8 +69,8 @@ router.post('/register', (req, res) => {
             newUser
               .save()
               .then(() => {
-                req.flash('success_msg', 'you are now registered');
                 res.redirect('/users/login');
+                req.flash('success_msg', 'you are now registered');
               })
               .catch(err => {
                 console.log(err);

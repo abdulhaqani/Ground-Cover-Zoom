@@ -1,6 +1,7 @@
+{{#if user}}
 <div class="jumbotron text-center">
   <h1 class="display-3">{{title}}</h1>
-  <p class="lead">add displayForms</p>
+  <p class="lead">add Display Forms</p>
   <a href="/displayForms/add" class="btn btn-dark btn-lg">add idea</a>
 </div>
 {{#each displayForms}}
@@ -13,5 +14,8 @@
     <input type="submit" class="btn btn-danger btn-block" value="Delete">
   </form>
 </div>
-{{else}}
 {{/each}}
+
+{{#else}}
+<p>Login required</p>
+{{/if}}
