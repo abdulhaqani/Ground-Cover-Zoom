@@ -63,8 +63,7 @@ router.post('/', (req, res) => {
 });
 
 // edit form process
-router.put('/:id', (req, res) => {
-  console.log('PUT');
+router.put('/edit/:id', (req, res) => {
   DisplayForms.findOne({
     _id: req.params.id,
   }).then(displayForms => {
