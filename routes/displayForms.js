@@ -2,13 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const router = express.Router();
+const { ensureAuthenticated } = require('../helpers/auth');
 
 require('../models/DisplayForms');
 
 const DisplayForms = mongoose.model('displayForms');
 
 // DisplayForms index page
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
   DisplayForms.find({})
     .sort({ date: 'desc' })
     .then(displayForms => {
@@ -19,12 +20,12 @@ router.get('/', (req, res) => {
 });
 
 // Add displayForms form
-router.get('/add', (req, res) => {
+router.get('/add', ensureAuthenticated, (req, res) => {
   res.render('displayForms/add');
 });
 
 // edit displayForms form
-router.get('/edit/:id', (req, res) => {
+router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   DisplayForms.findOne({
     _id: req.params.id,
   }).then(displayForm => {
@@ -35,7 +36,7 @@ router.get('/edit/:id', (req, res) => {
 });
 
 // process form
-router.post('/', (req, res) => {
+router.post('/', ensureAuthenticated, (req, res) => {
   const errors = [];
   if (!req.body.title) {
     errors.push({ text: 'please add a title' });
@@ -63,7 +64,7 @@ router.post('/', (req, res) => {
 });
 
 // edit form process
-router.put('/edit/:id', (req, res) => {
+router.put('/edit/:id', ensureAuthenticated, (req, res) => {
   DisplayForms.findOne({
     _id: req.params.id,
   }).then(displayForms => {
@@ -78,7 +79,7 @@ router.put('/edit/:id', (req, res) => {
 });
 
 // Delete displayForms
-router.delete('/:id', (req, res) => {
+router.delete('/:id', ensureAuthenticated, (req, res) => {
   DisplayForms.deleteOne({ _id: req.params.id }).then(() => {
     req.flash('success_msg', 'displayForms removed');
     res.redirect('/displayForms');

@@ -76,21 +76,16 @@ app.use(
 // Flash middleware
 app.use(flash());
 
-// Global variables
-app.use(function(req, res, next) {
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.error_msg = req.flash('error_msg');
-  res.locals.error = req.flash('error');
-  res.locals.err = req.flash('err');
-  next();
-});
-
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // method override middleware
 app.use(methodOverride('_method'));
+
+// passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Global variables
 app.use(function(req, res, next) {
