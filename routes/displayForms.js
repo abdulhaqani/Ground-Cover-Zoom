@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -9,7 +10,7 @@ const DisplayForms = mongoose.model('displayForms');
 
 // DisplayForms index page
 router.get('/', (req, res) => {
-  DisplayForms.find({})
+  DisplayForms.find({ user: req.user.id })
     .sort({ date: 'desc' })
     .then(displayForms => {
       res.render('displayForms/index', {
@@ -28,6 +29,10 @@ router.get('/edit/:id', (req, res) => {
   DisplayForms.findOne({
     _id: req.params.id,
   }).then(displayForm => {
+    if (displayForm.user != req.user.id) {
+      req.flash('error_msg', 'Not authorized');
+      res.redirect('/displaForms/');
+    }
     res.render('displayForms/edit', {
       displayForm,
     });
