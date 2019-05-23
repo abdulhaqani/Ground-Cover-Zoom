@@ -25,7 +25,6 @@ router.post('/login', (req, res, next) => {
   passport.authenticate('local', {
     successRedirect: '/displayForms',
     failureRedirect: '/users/login',
-    failureMessage: 'incorrect email or password',
     failureFlash: true,
   })(req, res, next);
 });
@@ -80,6 +79,13 @@ router.post('/register', (req, res) => {
       }
     });
   }
+});
+
+// Logout user
+router.get('/logout', (req, res) => {
+  req.logout();
+  req.flash('success_msg', 'you are logged out');
+  res.redirect('/');
 });
 
 module.exports = router;
