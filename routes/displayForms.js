@@ -32,11 +32,12 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   }).then(displayForm => {
     if (displayForm.user != req.user.id) {
       req.flash('error_msg', 'Not authorized');
-      res.redirect('/displaForms/');
+      res.redirect('/displayForms');
+    } else {
+      res.render('displayForms/edit', {
+        displayForm,
+      });
     }
-    res.render('displayForms/edit', {
-      displayForm,
-    });
   });
 });
 
@@ -60,6 +61,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
     const newUser = {
       title: req.body.title,
       details: req.body.details,
+      user: req.user.id,
     };
     new DisplayForms(newUser).save().then(() => {
       req.flash('success_msg', 'displayForms added');
