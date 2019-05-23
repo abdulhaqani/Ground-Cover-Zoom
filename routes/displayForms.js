@@ -64,6 +64,7 @@ router.post('/', (req, res) => {
 
 // edit form process
 router.put('/:id', (req, res) => {
+  console.log('PUT');
   DisplayForms.findOne({
     _id: req.params.id,
   }).then(displayForms => {
@@ -79,7 +80,7 @@ router.put('/:id', (req, res) => {
 
 // Delete displayForms
 router.delete('/:id', (req, res) => {
-  DisplayForms.remove({ _id: req.params.id }).then(() => {
+  DisplayForms.deleteOne({ _id: req.params.id }).then(() => {
     req.flash('success_msg', 'displayForms removed');
     res.redirect('/displayForms');
   });
