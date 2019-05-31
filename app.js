@@ -16,21 +16,11 @@ const app = express();
 
 // load routes
 const displayForms = require('./routes/displayForms');
-const greenhouse = require('./routes/greenhouse');
 const users = require('./routes/users');
 
 // require models
-require('./models/Greenhouse');
 require('./models/Users');
 require('./models/DisplayForms');
-
-// model instance
-const Display = mongoose.model('displayForms');
-const Green = mongoose.model('green');
-const User = mongoose.model('users');
-
-// Map global promise - get rid of warning
-mongoose.Promise = global.Promise;
 
 // connect to mongoose
 mongoose
@@ -39,6 +29,13 @@ mongoose
   })
   .then(() => console.log('connected to mongodb'))
   .catch(err => console.log(err));
+
+// model instance
+const Display = mongoose.model('displayForms');
+const User = mongoose.model('users');
+
+// Map global promise - get rid of warning
+mongoose.Promise = global.Promise;
 
 mongoose.connection
   .once('open', () => {
