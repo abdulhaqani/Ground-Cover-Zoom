@@ -1,16 +1,18 @@
 <div class="jumbotron text-center">
-  <h1 class="display-3">{{title}}</h1>
-  <p class="lead">add Display Forms</p>
-  <a href="/displayForms/add" class="btn btn-dark btn-lg">add idea</a>
+  <h3>Classify an object</h3>
+  <hr>
+  <div class="row">
+    <div class="col-sm">
+    <img style="width: 40%;" src="https://tinyurl.com/y6ku7bs3">
+    </div>
+    <div style="outline: 2px solid black"class="col-sm">
+      <br />
+      <h5>This is a...</h5>
+      <hr>
+      <button class="btn btn-secondary">Green House</button>
+      <button class="btn btn-secondary">Solar Panel</button>
+      <br />
+      <button class="btn btn-danger" style="margin-top: 5%; margin-bottom: 5%;">Neither</button>
+    </div>
+  </div>
 </div>
-{{#each displayForms}}
-<div class="card card-body mb-2">
-  <h4>{{title}}</h4>
-  <p>{{details}}</p>
-  <a class="btn btn-dark btn-block" href="/displayForms/edit/{{id}}">Edit</a>
-  <form method="post" action="/displayForms/{{id}}?_method=DELETE">
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" class="btn btn-danger btn-block" value="Delete">
-  </form>
-</div>
-{{/each}}
