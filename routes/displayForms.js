@@ -1,8 +1,6 @@
 /* eslint-disable eqeqeq */
 const express = require('express');
 const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
 
 const router = express.Router();
 const { ensureAuthenticated } = require('../helpers/auth');
