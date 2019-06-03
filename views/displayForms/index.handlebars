@@ -3,16 +3,30 @@
   <hr>
   <div class="row">
     <div class="col-sm">
-    <img style="width: 40%;" src="https://tinyurl.com/y6ku7bs3">
+      <img style="width: 40%;" src="https://tinyurl.com/y6ku7bs3">
     </div>
-    <div style="outline: 2px solid black"class="col-sm">
+    <div style="outline: 2px solid black" class="col-sm">
       <br />
-      <h5>This is a...</h5>
+      <h5>Classify Image</h5>
       <hr>
-      <button class="btn btn-secondary">Green House</button>
-      <button class="btn btn-secondary">Solar Panel</button>
-      <br />
-      <button class="btn btn-danger" style="margin-top: 5%; margin-bottom: 5%;">Neither</button>
+      <form action="/displayForms/" method="post">
+        <div class="form-check">
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="true" id="defaultCheck1" name="greenHouse">
+            <label class="form-check-label" for="defaultCheck1">
+              Is there a green house in this image?
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="true" id="defaultCheck1" name="solarPanel">
+            <label class="form-check-label" for="defaultCheck1">
+              Is there a solar panel in this image?
+            </label>
+          </div>
+          <br>
+          <button type="submit" class="btn btn-secondary" style="margin-bottom: 5%;">Submit</button>
+      </form>
     </div>
   </div>
 </div>
