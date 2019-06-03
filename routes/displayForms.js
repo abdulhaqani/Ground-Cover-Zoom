@@ -34,7 +34,4 @@ router.post('/', (req, res) => {
   console.log(req.body.solarPanel);
 });
 
-// solar panel post request
-
-// neither post request
 module.exports = router;
