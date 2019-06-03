@@ -10,17 +10,17 @@ require('../models/DisplayForms');
 const DisplayForms = mongoose.model('displayForms');
 
 // DisplayForms index page
-router.get('/', ensureAuthenticated, (req, res) => {
+router.get('/', (req, res) => {
   res.render('displayForms/index');
 });
 
 // Add displayForms form
-router.get('/add', ensureAuthenticated, (req, res) => {
+router.get('/add', (req, res) => {
   res.render('displayForms/add');
 });
 
 // process form
-router.post('/', ensureAuthenticated, (req, res) => {
+router.post('/', (req, res) => {
   const newImage = {
     // image source
   };
