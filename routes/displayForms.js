@@ -10,17 +10,12 @@ require('../models/DisplayForms');
 const DisplayForms = mongoose.model('displayForms');
 
 // DisplayForms index page
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
   res.render('displayForms/index');
 });
 
-// Add displayForms form
-router.get('/add', (req, res) => {
-  res.render('displayForms/add');
-});
-
 // greenhouse post request
-router.post('/', (req, res) => {
+router.post('/', ensureAuthenticated, (req, res) => {
   const newClassification = {
     // image source
   };
@@ -29,7 +24,6 @@ router.post('/', (req, res) => {
     res.redirect('/displayForms');
   });
   console.log(req.body.greenHouse);
-  console.log(req.body.solarPanel);
 });
 
 module.exports = router;
