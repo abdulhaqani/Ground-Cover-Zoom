@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const DisplaySchema = new Schema({
-  img: {
-    data: Buffer,
-    contentType: String,
-  },
+  FileName: String,
+  Classified: Boolean,
+  SolarPanel: Boolean,
+  GreenHouse: Boolean,
 });
 
 mongoose.model('displayForms', DisplaySchema);
