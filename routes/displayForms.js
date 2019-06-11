@@ -40,14 +40,12 @@ router.post('/', ensureAuthenticated, (req, res) => {
   if (i == 0) {
     fileName = '';
   }
-  console.log(req.body.greenHouse);
 
   let fileSource = '';
   let fileDest = '';
   if (fileName != '') {
     // create the destination folder depending on the req.body
     if (req.body.greenHouse) {
-      console.log(req.body.greenHouse);
       fileSource = path.join(
         __dirname,
         `./../public/greenHouseImages/${fileName}`
