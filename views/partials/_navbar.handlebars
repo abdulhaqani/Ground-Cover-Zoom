@@ -10,24 +10,27 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         {{#if user}}
-        <li class="nav-item">
+        <li class="nav-item text-center">
           <a href="/" class="nav-link" style="color: white;">Home</a>
         </li>
-        <li class="nav-item">
-          <a href="/displayForms" class="nav-link" style="color: white;">Training Page</a>
+        <li class="nav-item text-center">
+          <a href="/displayForms" class="nav-link" style="color: white;">Greenhouse Training Page</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item text-center">
+          <a href="/displayForms/solarPanel " class="nav-link" style="color: white;">Solar Panel Training Page</a>
+        </li>
+        <li class="nav-item text-center">
           <a href="/users/logout" class="nav-link" style="color: white;">Logout</a>
         </li>
 
         {{else}}
-        <li class="nav-item">
+        <li class="nav-item text-center">
           <a href="/" class="nav-link" style="color: white;">Home</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item text-center">
           <a href="/users/login" class="nav-link" style="color: white;">Login</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item text-center">
           <a href="/users/register" class="nav-link" style="color: white;">Register</a>
         </li>
         {{/if}}

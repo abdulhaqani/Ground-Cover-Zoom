@@ -3,7 +3,7 @@
   <hr>
   <div class="row">
     <div class="col-sm">
-      <img src="/pictures/2.jpeg" alt="" style="width=100%">
+      <img src="/greenHouseImages/2.jpeg" alt="" style="width=100%">
     </div>
     <div style="outline: 2px solid black" class="col-sm">
       <br />
@@ -11,21 +11,13 @@
       <hr>
       <form action="/displayForms/" method="post">
         <div class="form-check">
-
+          <h3>Is there a greenHouse in this picture?</h3>
+          <br>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="true" id="defaultCheck1" name="greenHouse">
-            <label class="form-check-label" for="defaultCheck1">
-              Is there a green house in this image?
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="true" id="defaultCheck1" name="solarPanel">
-            <label class="form-check-label" for="defaultCheck1">
-              Is there a solar panel in this image?
-            </label>
+            <input type="submit" class="btn btn-success" value="true" id="greenHousePresent" name="greenHouse">
+            <input type="submit" class="btn btn-danger" value="false" id="noGreenHouse" name="noGreenHosue">
           </div>
           <br>
-          <button type="submit" class="btn btn-secondary" style="margin-bottom: 5%;">Submit</button>
       </form>
     </div>
   </div>
