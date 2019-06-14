@@ -21,16 +21,6 @@ const DisplayForms = mongoose.model('displayForms');
 
 // DisplayForms index page
 router.get('/', ensureAuthenticated, (req, res) => {
-  res.render('displayForms/index');
-});
-
-// DisplayForms index page
-router.get('/solarpanel', ensureAuthenticated, (req, res) => {
-  res.render('displayForms/solarpanel');
-});
-
-// greenhouse post request
-router.post('/', ensureAuthenticated, (req, res) => {
   const fromImageFolder = './public/greenHouseImages';
   let i = 0;
   fs.readdirSync(fromImageFolder).forEach(file => {
@@ -40,7 +30,27 @@ router.post('/', ensureAuthenticated, (req, res) => {
   if (i == 0) {
     fileName = '';
   }
+  const imgPath = `/greenHouseImages/${fileName}`;
+  res.render('displayForms/index', { imgPath });
+});
 
+// solar panel display form page
+router.get('/solarpanel', ensureAuthenticated, (req, res) => {
+  const fromImageFolder = './public/solarPanelImages';
+  let i = 0;
+  fs.readdirSync(fromImageFolder).forEach(file => {
+    fileName = file;
+    i += 1;
+  });
+  if (i == 0) {
+    fileName = '';
+  }
+  const imgPath = `/solarPanelImages/${fileName}`;
+  res.render('displayForms/solarpanel', { imgPath });
+});
+
+// greenhouse post request
+router.post('/', ensureAuthenticated, (req, res) => {
   let fileSource = '';
   let fileDest = '';
   if (fileName != '') {
@@ -70,7 +80,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
     fsExtra.remove(fileSource, err => {
       if (!err) {
         // classify image in mongodb
-        if (req.body.SolarPanel == 'yes') {
+        if (req.body.greenHouse) {
           const newClassification = {
             FileName: fileName,
             Classified: true,
@@ -114,23 +124,12 @@ router.post('/', ensureAuthenticated, (req, res) => {
 
 // solarPanel post request
 router.post('/solarpanel', ensureAuthenticated, (req, res) => {
-  const fromImageFolder = './public/solarPanelImages';
-
-  let i = 0;
-  // get 1 image from folder
-  fs.readdirSync(fromImageFolder).forEach(file => {
-    fileName = file;
-    i += 1;
-  });
-  if (i == 0) {
-    fileName = '';
-  }
   let fileSource = '';
   let fileDest = '';
-
+  console.log(req.body.solarPanel);
   if (fileName != '') {
     // create the destination folder depending on the req.body
-    if (req.body.SolarPanel == 'yes') {
+    if (req.body.solarPanel) {
       fileSource = path.join(
         __dirname,
         `./../public/solarPanelImages/${fileName}`
@@ -155,7 +154,7 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
     fsExtra.remove(fileSource, err => {
       if (!err) {
         // mongodb classification
-        if (req.body.SolarPanel == 'yes') {
+        if (req.body.solarPanel) {
           const newClassification = {
             FileName: fileName,
             Classified: true,
