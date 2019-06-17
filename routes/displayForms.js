@@ -69,7 +69,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
         __dirname,
         `./../public/greenHouseImages/${fileName}`
       );
-      fileDest = path.join(__dirname, `./../public/noGreenHouse/${fileName}`);
+      fileDest = path.join(__dirname, `./../public/greenHouseNotPresent/${fileName}`);
     }
     // copy the file to the destination folder
     fs.copyFileSync(fileSource, fileDest, err => {
@@ -143,7 +143,7 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
         __dirname,
         `./../public/solarPanelImages/${fileName}`
       );
-      fileDest = path.join(__dirname, `./../public/noSolarPanel/${fileName}`);
+      fileDest = path.join(__dirname, `./../public/solarPanelNotPresent/${fileName}`);
     }
     // copy file to destination folder
     fs.copyFileSync(fileSource, fileDest, err => {
