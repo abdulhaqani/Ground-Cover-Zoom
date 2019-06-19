@@ -27,8 +27,8 @@ router.get('/', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/greenHousePresent')) {
     fs.mkdirSync('./public/greenHousePresent');
   }
-  if (!fs.existsSync('./public/noGreenHouse')) {
-    fs.mkdirSync('./public/noGreenHouse');
+  if (!fs.existsSync('./public/greenHouseNotPresent')) {
+    fs.mkdirSync('./public/greenHouseNotPresent');
   }
   const fromImageFolder = './public/greenHouseImages';
   let i = 0;
@@ -51,8 +51,8 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/solarPanelPresent')) {
     fs.mkdirSync('./public/solarPanelPresent');
   }
-  if (!fs.existsSync('./public/noSolarPanel')) {
-    fs.mkdirSync('./public/noSolarPanel');
+  if (!fs.existsSync('./public/solarPanelNotPresent')) {
+    fs.mkdirSync('./public/solarPanelNotPresent');
   }
   const fromImageFolder = './public/solarPanelImages';
   let i = 0;
@@ -87,7 +87,6 @@ router.post('/', ensureAuthenticated, (req, res) => {
         __dirname,
         `./../public/greenHouseImages/${fileName}`
       );
-      fileDest = path.join(__dirname, `./../public/greenHouseNotPresent/${fileName}`);
     }
     // copy the file to the destination folder
     fs.copyFileSync(fileSource, fileDest, err => {
@@ -161,7 +160,10 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
         __dirname,
         `./../public/solarPanelImages/${fileName}`
       );
-      fileDest = path.join(__dirname, `./../public/solarPanelNotPresent/${fileName}`);
+      fileDest = path.join(
+        __dirname,
+        `./../public/solarPanelNotPresent/${fileName}`
+      );
     }
     // copy file to destination folder
     fs.copyFileSync(fileSource, fileDest, err => {
