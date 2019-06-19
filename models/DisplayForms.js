@@ -7,6 +7,8 @@ const DisplaySchema = new Schema({
   Classified: Boolean,
   SolarPanel: Boolean,
   GreenHouse: Boolean,
+  Lat: String,
+  Lon: String,
 });
 
 mongoose.model('displayForms', DisplaySchema);

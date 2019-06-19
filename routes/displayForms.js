@@ -19,8 +19,17 @@ require('../models/DisplayForms');
 
 const DisplayForms = mongoose.model('displayForms');
 
-// DisplayForms index page
+// greenhouse page
 router.get('/', ensureAuthenticated, (req, res) => {
+  if (!fs.existsSync('./public/greenHouseImages')) {
+    fs.mkdirSync('./public/greenHouseImages');
+  }
+  if (!fs.existsSync('./public/greenHousePresent')) {
+    fs.mkdirSync('./public/greenHousePresent');
+  }
+  if (!fs.existsSync('./public/noGreenHouse')) {
+    fs.mkdirSync('./public/noGreenHouse');
+  }
   const fromImageFolder = './public/greenHouseImages';
   let i = 0;
   fs.readdirSync(fromImageFolder).forEach(file => {
@@ -36,6 +45,15 @@ router.get('/', ensureAuthenticated, (req, res) => {
 
 // solar panel display form page
 router.get('/solarpanel', ensureAuthenticated, (req, res) => {
+  if (!fs.existsSync('./public/solarPanelImages')) {
+    fs.mkdirSync('./public/solarPanelImages');
+  }
+  if (!fs.existsSync('./public/solarPanelPresent')) {
+    fs.mkdirSync('./public/solarPanelPresent');
+  }
+  if (!fs.existsSync('./public/noSolarPanel')) {
+    fs.mkdirSync('./public/noSolarPanel');
+  }
   const fromImageFolder = './public/solarPanelImages';
   let i = 0;
   fs.readdirSync(fromImageFolder).forEach(file => {
