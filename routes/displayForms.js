@@ -7,7 +7,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 let fileName = '';
-
+let imgPath = '';
 const router = express.Router();
 const { ensureAuthenticated } = require('../helpers/auth');
 
@@ -39,7 +39,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
   if (i == 0) {
     fileName = '';
   }
-  const imgPath = `/greenHouseImages/${fileName}`;
+  imgPath = `/greenHouseImages/${fileName}`;
   res.render('displayForms/index', { imgPath });
 });
 
@@ -63,7 +63,7 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   if (i == 0) {
     fileName = '';
   }
-  const imgPath = `/solarPanelImages/${fileName}`;
+  imgPath = `/solarPanelImages/${fileName}`;
   res.render('displayForms/solarpanel', { imgPath });
 });
 
@@ -73,19 +73,19 @@ router.post('/', ensureAuthenticated, (req, res) => {
   let fileDest = '';
   if (fileName != '') {
     // create the destination folder depending on the req.body
+    fileSource = path.join(
+      __dirname,
+      `./../public/greenHouseImages/${fileName}`
+    );
     if (req.body.greenHouse) {
-      fileSource = path.join(
-        __dirname,
-        `./../public/greenHouseImages/${fileName}`
-      );
       fileDest = path.join(
         __dirname,
         `./../public/greenHousePresent/${fileName}`
       );
     } else {
-      fileSource = path.join(
+      fileDest = path.join(
         __dirname,
-        `./../public/greenHouseImages/${fileName}`
+        `./../public/greenHouseNotPresent/${fileName}`
       );
     }
     // copy the file to the destination folder
@@ -146,20 +146,16 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
   console.log(req.body.solarPanel);
   if (fileName != '') {
     // create the destination folder depending on the req.body
+    fileSource = path.join(
+      __dirname,
+      `./../public/solarPanelImages/${fileName}`
+    );
     if (req.body.solarPanel) {
-      fileSource = path.join(
-        __dirname,
-        `./../public/solarPanelImages/${fileName}`
-      );
       fileDest = path.join(
         __dirname,
         `./../public/solarPanelPresent/${fileName}`
       );
     } else {
-      fileSource = path.join(
-        __dirname,
-        `./../public/solarPanelImages/${fileName}`
-      );
       fileDest = path.join(
         __dirname,
         `./../public/solarPanelNotPresent/${fileName}`
