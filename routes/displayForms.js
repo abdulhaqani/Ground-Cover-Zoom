@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable eqeqeq */
 const express = require('express');
 const mongoose = require('mongoose');
@@ -88,6 +89,15 @@ router.post('/', ensureAuthenticated, (req, res) => {
         `./../public/greenHouseNotPresent/${fileName}`
       );
     }
+    let zoom = '';
+    let lat = '';
+    let lon = '';
+    const fileSplit = fileName.split('_');
+    if (fileSplit.length() > 2) {
+      zoom = fileSplit[0];
+      lat = fileSplit[1];
+      lon = fileSplit[1];
+    }
     // copy the file to the destination folder
     fs.copyFileSync(fileSource, fileDest, err => {
       if (err) return console.error(err);
@@ -103,6 +113,10 @@ router.post('/', ensureAuthenticated, (req, res) => {
             Classified: true,
             SolarPanel: false,
             GreenHouse: true,
+            User: req.user.id,
+            Zoom: zoom,
+            Lat: lat,
+            Lon: lon,
           };
           new DisplayForms(newClassification)
             .save()
@@ -118,7 +132,11 @@ router.post('/', ensureAuthenticated, (req, res) => {
             FileName: fileName,
             Classified: true,
             SolarPanel: false,
-            GreenHouse: false,
+            GreenHouse: true,
+            User: req.user.id,
+            Zoom: zoom,
+            Lat: lat,
+            Lon: lon,
           };
           new DisplayForms(newClassification)
             .save()
@@ -161,6 +179,15 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
         `./../public/solarPanelNotPresent/${fileName}`
       );
     }
+    let zoom = '';
+    let lat = '';
+    let lon = '';
+    const fileSplit = fileName.split('_');
+    if (fileSplit.length() > 2) {
+      zoom = fileSplit[0];
+      lat = fileSplit[1];
+      lon = fileSplit[1];
+    }
     // copy file to destination folder
     fs.copyFileSync(fileSource, fileDest, err => {
       if (err) return console.error(err);
@@ -174,8 +201,12 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
           const newClassification = {
             FileName: fileName,
             Classified: true,
-            SolarPanel: true,
-            GreenHouse: false,
+            SolarPanel: false,
+            GreenHouse: true,
+            User: req.user.id,
+            Zoom: zoom,
+            Lat: lat,
+            Lon: lon,
           };
           new DisplayForms(newClassification)
             .save()
@@ -191,7 +222,11 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
             FileName: fileName,
             Classified: true,
             SolarPanel: false,
-            GreenHouse: false,
+            GreenHouse: true,
+            User: req.user.id,
+            Zoom: zoom,
+            Lat: lat,
+            Lon: lon,
           };
           new DisplayForms(newClassification)
             .save()
