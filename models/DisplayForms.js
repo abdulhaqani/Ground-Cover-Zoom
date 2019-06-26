@@ -29,6 +29,9 @@ const DisplaySchema = new Schema({
   Lon: {
     type: String,
   },
+  Zoom: {
+    type: String,
+  },
 });
 
 mongoose.model('displayForms', DisplaySchema);
