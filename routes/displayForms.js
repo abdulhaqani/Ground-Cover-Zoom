@@ -93,7 +93,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
     let lat = '';
     let lon = '';
     const fileSplit = fileName.split('_');
-    if (fileSplit.length() > 2) {
+    if (fileSplit.length > 2) {
       zoom = fileSplit[0];
       lat = fileSplit[1];
       lon = fileSplit[1];
@@ -183,7 +183,7 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
     let lat = '';
     let lon = '';
     const fileSplit = fileName.split('_');
-    if (fileSplit.length() > 2) {
+    if (fileSplit.length > 2) {
       zoom = fileSplit[0];
       lat = fileSplit[1];
       lon = fileSplit[1];
