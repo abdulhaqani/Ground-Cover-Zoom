@@ -48,17 +48,36 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/allImages')) {
     fs.mkdirSync('./public/allImages');
   }
-  DisplayForms.findOne().filter();
-  const fromImageFolder = './public/allImages';
-  let i = 0;
-  fs.readdirSync(fromImageFolder).forEach(file => {
-    fileName = file;
-    i += 1;
-  });
-  if (i == 0) {
+  let previousName = '';
+  const a = [];
+  DisplayForms.find({})
+    .sort('FileName') // sort by  file name
+    .exec()
+    .for(displayForm => {
+      // for each
+      const name = displayForm.FileName;
+      // if copy
+      if (name == previousName) {
+        console.log(name);
+        // if already put into array
+        if (a.includes(name)) {
+          console.log('already in');
+        } else {
+          // else put into array
+          a.push(name);
+        }
+      }
+      previousName = name;
+    });
+  // now array a has all copies
+  // if no copies no file name for retraining
+  if (a.length() == 0) {
     fileName = '';
+  } else {
+    // just chose first element because it shouldn't matter which copy is present. Once post is called it will be removed
+    fileName = a[0];
   }
-  imgPath = `/greenHouseImages/${fileName}`;
+  imgPath = `/allImages/${fileName}`;
   res.render('displayForms/greenhouseretrain', { imgPath });
 });
 // solar panel display form page
@@ -83,29 +102,6 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   }
   imgPath = `/solarPanelImages/${fileName}`;
   res.render('displayForms/solarpanel', { imgPath });
-});
-// solar panel retrain display form page
-router.get('/solarpanelretrain', ensureAuthenticated, (req, res) => {
-  if (!fs.existsSync('./public/solarPanelImages')) {
-    fs.mkdirSync('./public/solarPanelImages');
-  }
-  if (!fs.existsSync('./public/solarPanelPresent')) {
-    fs.mkdirSync('./public/solarPanelPresent');
-  }
-  if (!fs.existsSync('./public/solarPanelNotPresent')) {
-    fs.mkdirSync('./public/solarPanelNotPresent');
-  }
-  const fromImageFolder = './public/solarPanelImages';
-  let i = 0;
-  fs.readdirSync(fromImageFolder).forEach(file => {
-    fileName = file;
-    i += 1;
-  });
-  if (i == 0) {
-    fileName = '';
-  }
-  imgPath = `/solarPanelImages/${fileName}`;
-  res.render('displayForms/solarpanelretrain', { imgPath });
 });
 // greenhouse post request
 router.post('/', ensureAuthenticated, (req, res) => {
