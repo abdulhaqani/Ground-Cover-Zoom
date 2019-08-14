@@ -43,7 +43,24 @@ router.get('/', ensureAuthenticated, (req, res) => {
   imgPath = `/greenHouseImages/${fileName}`;
   res.render('displayForms/index', { imgPath });
 });
-
+// greenhouse retrain page
+router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
+  if (!fs.existsSync('./public/allImages')) {
+    fs.mkdirSync('./public/allImages');
+  }
+  DisplayForms.findOne().filter();
+  const fromImageFolder = './public/allImages';
+  let i = 0;
+  fs.readdirSync(fromImageFolder).forEach(file => {
+    fileName = file;
+    i += 1;
+  });
+  if (i == 0) {
+    fileName = '';
+  }
+  imgPath = `/greenHouseImages/${fileName}`;
+  res.render('displayForms/greenhouseretrain', { imgPath });
+});
 // solar panel display form page
 router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/solarPanelImages')) {
@@ -67,7 +84,29 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   imgPath = `/solarPanelImages/${fileName}`;
   res.render('displayForms/solarpanel', { imgPath });
 });
-
+// solar panel retrain display form page
+router.get('/solarpanelretrain', ensureAuthenticated, (req, res) => {
+  if (!fs.existsSync('./public/solarPanelImages')) {
+    fs.mkdirSync('./public/solarPanelImages');
+  }
+  if (!fs.existsSync('./public/solarPanelPresent')) {
+    fs.mkdirSync('./public/solarPanelPresent');
+  }
+  if (!fs.existsSync('./public/solarPanelNotPresent')) {
+    fs.mkdirSync('./public/solarPanelNotPresent');
+  }
+  const fromImageFolder = './public/solarPanelImages';
+  let i = 0;
+  fs.readdirSync(fromImageFolder).forEach(file => {
+    fileName = file;
+    i += 1;
+  });
+  if (i == 0) {
+    fileName = '';
+  }
+  imgPath = `/solarPanelImages/${fileName}`;
+  res.render('displayForms/solarpanelretrain', { imgPath });
+});
 // greenhouse post request
 router.post('/', ensureAuthenticated, (req, res) => {
   let fileSource = '';

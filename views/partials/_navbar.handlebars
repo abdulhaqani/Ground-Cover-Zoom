@@ -3,36 +3,41 @@
     <a class="navbar-brand" href="/">
       <img src="/images/logo_canada.svg" style="width: 20%; display: auto;">
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         {{#if user}}
-        <li class="nav-item text-center">
-          <a href="/" class="nav-link" style="color: white;">Home</a>
-        </li>
-        <li class="nav-item text-center">
-          <a href="/displayForms" class="nav-link" style="color: white;">Greenhouse Training Page</a>
-        </li>
-        <li class="nav-item text-center">
-          <a href="/displayForms/solarPanel " class="nav-link" style="color: white;">Solar Panel Training Page</a>
-        </li>
-        <li class="nav-item text-center">
-          <a href="/users/logout" class="nav-link" style="color: white;">Logout</a>
-        </li>
+          <li class="nav-item text-center">
+            <a href="/" class="nav-link" style="color: white;">Home</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/displayForms" class="nav-link" style="color: white;">Greenhouse Training Page</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/displayForms/solarPanel " class="nav-link" style="color: white;">Solar Panel Training Page</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/displayForms/greenhouseretrain " class="nav-link" style="color: white;">Solar Panel Corrections</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/displayForms/solarpanelretrain " class="nav-link" style="color: white;">Green House Corrections</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/users/logout" class="nav-link" style="color: white;">Logout</a>
+          </li>
 
         {{else}}
-        <li class="nav-item text-center">
-          <a href="/" class="nav-link" style="color: white;">Home</a>
-        </li>
-        <li class="nav-item text-center">
-          <a href="/users/login" class="nav-link" style="color: white;">Login</a>
-        </li>
-        <li class="nav-item text-center">
-          <a href="/users/register" class="nav-link" style="color: white;">Register</a>
-        </li>
+          <li class="nav-item text-center">
+            <a href="/" class="nav-link" style="color: white;">Home</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/users/login" class="nav-link" style="color: white;">Login</a>
+          </li>
+          <li class="nav-item text-center">
+            <a href="/users/register" class="nav-link" style="color: white;">Register</a>
+          </li>
         {{/if}}
       </ul>
     </div>
