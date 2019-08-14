@@ -50,10 +50,10 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   }
   let previousName = '';
   const a = [];
-  DisplayForms.find({})
+  DisplayForms.find()
+    .all()
     .sort('FileName') // sort by  file name
-    .exec()
-    .for(displayForm => {
+    .exec(displayForm => {
       // for each
       const name = displayForm.FileName;
       // if copy
@@ -71,7 +71,7 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     });
   // now array a has all copies
   // if no copies no file name for retraining
-  if (a.length() == 0) {
+  if (a.length == 0) {
     fileName = '';
   } else {
     // just chose first element because it shouldn't matter which copy is present. Once post is called it will be removed
