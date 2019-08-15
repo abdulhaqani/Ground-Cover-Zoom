@@ -1,5 +1,5 @@
 <div class="jumbotron text-center" style="margin-top: 5%">
-  <h3>Classify an object</h3>
+  <h3>Correction classification</h3>
   <hr>
   <div class="row">
     <div class="col-sm">
@@ -11,11 +11,12 @@
       <hr>
       <form action="/displayForms/" method="post">
         <div class="form-check">
-          <h3>Is there a greenHouse in this picture?</h3>
+          <h3>What is inside this picture?</h3>
           <br>
           <div class="form-check">
-            <input type="submit" class="btn btn-success" value="true" id="greenHousePresent" name="greenHouse">
-            <input type="submit" class="btn btn-danger" value="false" id="noGreenHouse" name="noGreenHosue">
+            <input type="submit" class="btn btn-success btn-block" value="Green House" id="greenHousePresent" name="greenHouse">
+            <input type="submit" class="btn btn-block btn-primary" value="Solar Panel" id="solarPanelPresent" name="solarPanel">
+            <input type="submit" class="btn btn-danger btn-block" value="Nothing" id="noGreenHouse" name="nothing">
           </div>
           <br>
       </form>
