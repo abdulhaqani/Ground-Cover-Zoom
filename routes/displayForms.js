@@ -52,13 +52,14 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   const a = [];
   DisplayForms.find()
     .all()
-    .sort('FileName') // sort by  file name
-    .exec(displayForm => {
+    .sort({ FileName: 1 })
+    .exec((err, displayForm) => {
       // for each
-      const name = displayForm.FileName;
+      const name = displayForm;
+      console.log(name);
+
       // if copy
       if (name == previousName) {
-        console.log(name);
         // if already put into array
         if (a.includes(name)) {
           console.log('already in');
