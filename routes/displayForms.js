@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable eqeqeq */
 const express = require('express');
@@ -48,36 +49,33 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/allImages')) {
     fs.mkdirSync('./public/allImages');
   }
-  let previousName = '';
-  const a = [];
-  DisplayForms.find()
-    .all()
-    .sort({ FileName: 1 })
-    .exec((err, displayForm) => {
-      // for each
-      const name = displayForm;
-      console.log(name);
-
-      // if copy
-      if (name == previousName) {
-        // if already put into array
-        if (a.includes(name)) {
-          console.log('already in');
+  let a = [];
+  let b = [];
+  DisplayForms.find({}, (err, displayForms) => {
+    displayForms.forEach(displayForm => {
+      if (err) throw err;
+      if (a.includes(displayForm.FileName)) {
+        if (b.includes(displayForm.FileName)) {
+          console.log('b already included');
         } else {
-          // else put into array
-          a.push(name);
+          b.push(displayForm.FileName);
         }
+      } else {
+        // else put into array
+        a.push(displayForm.FileName);
       }
-      previousName = name;
     });
+  });
   // now array a has all copies
   // if no copies no file name for retraining
-  if (a.length == 0) {
+  if (b.length == 0) {
     fileName = '';
   } else {
     // just chose first element because it shouldn't matter which copy is present. Once post is called it will be removed
-    fileName = a[0];
+    fileName = b[0];
+    console.log(b[0]);
   }
+  console.log(b[0], 'OVER HERE');
   imgPath = `/allImages/${fileName}`;
   res.render('displayForms/greenhouseretrain', { imgPath });
 });
