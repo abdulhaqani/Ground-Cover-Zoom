@@ -65,19 +65,17 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         a.push(displayForm.FileName);
       }
     });
+    // now array a has all copies
+    // if no copies no file name for retraining
+    if (b.length == 0) {
+      fileName = '';
+    } else {
+      // just chose first element because it shouldn't matter which copy is present. Once post is called it will be removed
+      fileName = b[0];
+    }
+    imgPath = `/allImages/${fileName}`;
+    res.render('displayForms/greenhouseretrain', { imgPath });
   });
-  // now array a has all copies
-  // if no copies no file name for retraining
-  if (b.length == 0) {
-    fileName = '';
-  } else {
-    // just chose first element because it shouldn't matter which copy is present. Once post is called it will be removed
-    fileName = b[0];
-    console.log(b[0]);
-  }
-  console.log(b[0], 'OVER HERE');
-  imgPath = `/allImages/${fileName}`;
-  res.render('displayForms/greenhouseretrain', { imgPath });
 });
 // solar panel display form page
 router.get('/solarpanel', ensureAuthenticated, (req, res) => {
@@ -166,7 +164,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
             FileName: fileName,
             Classified: true,
             SolarPanel: false,
-            GreenHouse: true,
+            GreenHouse: false,
             User: req.user.id,
             Zoom: zoom,
             Lat: lat,
@@ -235,8 +233,8 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
           const newClassification = {
             FileName: fileName,
             Classified: true,
-            SolarPanel: false,
-            GreenHouse: true,
+            SolarPanel: true,
+            GreenHouse: false,
             User: req.user.id,
             Zoom: zoom,
             Lat: lat,
@@ -279,6 +277,64 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
     req.flash('error_msg', 'No Images left');
 
     res.redirect('/');
+  }
+});
+
+// greenhouse retrain post request
+router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
+  if (fileName != '') {
+    let zoom = '';
+    let lat = '';
+    let lon = '';
+    const fileSplit = fileName.split('_');
+    if (fileSplit.length > 2) {
+      zoom = fileSplit[0];
+      lat = fileSplit[1];
+      lon = fileSplit[1];
+    }
+    DisplayForms.remove(fileName == 'FileName');
+    // mongodb classification
+    if (req.body.solarPanel) {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: false,
+        GreenHouse: true,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'Solar Panel image classified');
+          res.redirect('/displayForms/solarpanel');
+        })
+        .catch(err => {
+          throw err;
+        });
+    } else {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: false,
+        GreenHouse: true,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'no Solar Panel image classified');
+          res.redirect('/displayForms/solarpanel');
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
   }
 });
 
