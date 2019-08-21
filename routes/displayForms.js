@@ -92,12 +92,6 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/solarPanelImages')) {
     fs.mkdirSync('./public/solarPanelImages');
   }
-  if (!fs.existsSync('./public/solarPanelPresent')) {
-    fs.mkdirSync('./public/solarPanelPresent');
-  }
-  if (!fs.existsSync('./public/solarPanelNotPresent')) {
-    fs.mkdirSync('./public/solarPanelNotPresent');
-  }
   const fromImageFolder = './public/solarPanelImages';
   let i = 0;
   fs.readdirSync(fromImageFolder).forEach(file => {
@@ -112,25 +106,7 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
 });
 // greenhouse post request
 router.post('/', ensureAuthenticated, (req, res) => {
-  let fileSource = '';
-  let fileDest = '';
   if (fileName != '') {
-    // create the destination folder depending on the req.body
-    fileSource = path.join(
-      __dirname,
-      `./../public/greenHouseImages/${fileName}`
-    );
-    if (req.body.greenHouse) {
-      fileDest = path.join(
-        __dirname,
-        `./../public/greenHousePresent/${fileName}`
-      );
-    } else {
-      fileDest = path.join(
-        __dirname,
-        `./../public/greenHouseNotPresent/${fileName}`
-      );
-    }
     let zoom = '';
     let lat = '';
     let lon = '';
@@ -140,58 +116,47 @@ router.post('/', ensureAuthenticated, (req, res) => {
       lat = fileSplit[1];
       lon = fileSplit[1];
     }
-    // copy the file to the destination folder
-    fs.copyFileSync(fileSource, fileDest, err => {
-      if (err) return console.error(err);
-      console.log('success');
-    });
-    // remove file from the origin folder
-    fsExtra.remove(fileSource, err => {
-      if (!err) {
-        // classify image in mongodb
-        if (req.body.greenHouse) {
-          const newClassification = {
-            FileName: fileName,
-            Classified: true,
-            SolarPanel: false,
-            GreenHouse: true,
-            User: req.user.id,
-            Zoom: zoom,
-            Lat: lat,
-            Lon: lon,
-          };
-          new DisplayForms(newClassification)
-            .save()
-            .then(() => {
-              req.flash('success_msg', 'greenhouse image classified');
-              res.redirect('/displayForms');
-            })
-            .catch(err => {
-              throw err;
-            });
-        } else {
-          const newClassification = {
-            FileName: fileName,
-            Classified: true,
-            SolarPanel: false,
-            GreenHouse: false,
-            User: req.user.id,
-            Zoom: zoom,
-            Lat: lat,
-            Lon: lon,
-          };
-          new DisplayForms(newClassification)
-            .save()
-            .then(() => {
-              req.flash('success_msg', 'no greenhouse image classified');
-              res.redirect('/displayForms');
-            })
-            .catch(err => {
-              throw err;
-            });
-        }
-      }
-    });
+    if (req.body.greenHouse) {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: false,
+        GreenHouse: true,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'greenhouse image classified');
+          res.redirect('/displayForms');
+        })
+        .catch(err => {
+          throw err;
+        });
+    } else {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: false,
+        GreenHouse: false,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'no greenhouse image classified');
+          res.redirect('/displayForms');
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
   } else {
     // if no images left then redirect
     req.flash('error_msg', 'No Images left');
@@ -201,26 +166,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
 
 // solarPanel post request
 router.post('/solarpanel', ensureAuthenticated, (req, res) => {
-  let fileSource = '';
-  let fileDest = '';
-  console.log(req.body.solarPanel);
   if (fileName != '') {
-    // create the destination folder depending on the req.body
-    fileSource = path.join(
-      __dirname,
-      `./../public/solarPanelImages/${fileName}`
-    );
-    if (req.body.solarPanel) {
-      fileDest = path.join(
-        __dirname,
-        `./../public/solarPanelPresent/${fileName}`
-      );
-    } else {
-      fileDest = path.join(
-        __dirname,
-        `./../public/solarPanelNotPresent/${fileName}`
-      );
-    }
     let zoom = '';
     let lat = '';
     let lon = '';
@@ -230,62 +176,50 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
       lat = fileSplit[1];
       lon = fileSplit[1];
     }
-    // copy file to destination folder
-    fs.copyFileSync(fileSource, fileDest, err => {
-      if (err) return console.error(err);
-      console.log('success');
-    });
-    // remove file from origin folder
-    fsExtra.remove(fileSource, err => {
-      if (!err) {
-        // mongodb classification
-        if (req.body.solarPanel) {
-          const newClassification = {
-            FileName: fileName,
-            Classified: true,
-            SolarPanel: true,
-            GreenHouse: false,
-            User: req.user.id,
-            Zoom: zoom,
-            Lat: lat,
-            Lon: lon,
-          };
-          new DisplayForms(newClassification)
-            .save()
-            .then(() => {
-              req.flash('success_msg', 'Solar Panel image classified');
-              res.redirect('/displayForms/solarpanel');
-            })
-            .catch(err => {
-              throw err;
-            });
-        } else {
-          const newClassification = {
-            FileName: fileName,
-            Classified: true,
-            SolarPanel: false,
-            GreenHouse: true,
-            User: req.user.id,
-            Zoom: zoom,
-            Lat: lat,
-            Lon: lon,
-          };
-          new DisplayForms(newClassification)
-            .save()
-            .then(() => {
-              req.flash('success_msg', 'no Solar Panel image classified');
-              res.redirect('/displayForms/solarpanel');
-            })
-            .catch(err => {
-              throw err;
-            });
-        }
-      }
-    });
+    if (req.body.greenHouse) {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: true,
+        GreenHouse: false,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'solar panel image classified');
+          res.redirect('/displayForms/solarPanel');
+        })
+        .catch(err => {
+          throw err;
+        });
+    } else {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: false,
+        GreenHouse: false,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'no solar image classified');
+          res.redirect('/displayForms');
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
   } else {
     // if no images left then redirect
     req.flash('error_msg', 'No Images left');
-
     res.redirect('/');
   }
 });
