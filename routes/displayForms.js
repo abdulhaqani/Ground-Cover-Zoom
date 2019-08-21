@@ -51,15 +51,12 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   }
   let a = [];
   let b = [];
+  let c = [];
   DisplayForms.find({}, (err, displayForms) => {
     displayForms.forEach(displayForm => {
       if (err) throw err;
       if (a.includes(displayForm.FileName)) {
-        if (b.includes(displayForm.FileName)) {
-          console.log('b already included');
-        } else {
-          b.push(displayForm.FileName);
-        }
+        c.push(displayForm);
       } else {
         // else put into array
         a.push(displayForm.FileName);
@@ -67,6 +64,19 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     });
     // now array a has all copies
     // if no copies no file name for retraining
+    // for all duplicates
+    for (let i = 0; i < c.length; i += 1) {
+      for (let j = i; j < c.length; j += 1) {
+        // if false positive or false negative
+        if (
+          c[i].GreenHouse != c[j].GreenHouse ||
+          c[i].SolarPanel != c[j].SolarPanel
+        ) {
+          // if b doesn't already have this filename
+          if (!b.includes(c[i].FileName)) b.push(c[i].FileName);
+        }
+      }
+    }
     if (b.length == 0) {
       fileName = '';
     } else {
@@ -292,7 +302,15 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       lat = fileSplit[1];
       lon = fileSplit[1];
     }
-    DisplayForms.remove(fileName == 'FileName');
+    DisplayForms.find({}, (err, displayForms) => {
+      displayForms.forEach(displayForm => {
+        if (displayForm.FileName == fileName) {
+          displayForm.remove(() => {
+            console.log('removed');
+          });
+        }
+      });
+    });
     // mongodb classification
     if (req.body.solarPanel) {
       const newClassification = {
