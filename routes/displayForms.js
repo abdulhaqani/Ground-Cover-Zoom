@@ -4,8 +4,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
-const fsExtra = require('fs-extra');
-const path = require('path');
 const bodyParser = require('body-parser');
 
 let fileName = '';
@@ -26,23 +24,33 @@ router.get('/', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/greenHouseImages')) {
     fs.mkdirSync('./public/greenHouseImages');
   }
-  if (!fs.existsSync('./public/greenHousePresent')) {
-    fs.mkdirSync('./public/greenHousePresent');
-  }
-  if (!fs.existsSync('./public/greenHouseNotPresent')) {
-    fs.mkdirSync('./public/greenHouseNotPresent');
-  }
+  let b = false;
   const fromImageFolder = './public/greenHouseImages';
-  let i = 0;
-  fs.readdirSync(fromImageFolder).forEach(file => {
-    fileName = file;
-    i += 1;
+  fs.readdirSync(fromImageFolder).forEach(() => {
+    b = true;
   });
-  if (i == 0) {
+  if (b) {
+    fs.readdirSync(fromImageFolder).forEach(file => {
+      DisplayForms.find({}, (err, displayForms) => {
+        let a = true;
+        displayForms.forEach(displayForm => {
+          // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
+          if (displayForm.FileName == file && displayForm.User == req.user.id) {
+            a = false;
+          } else {
+            fileName = file;
+          }
+        });
+        if (a == false) fileName = '';
+        imgPath = `/greenHouseImages/${fileName}`;
+        res.render('displayForms/index', { imgPath });
+      });
+    });
+  } else {
     fileName = '';
+    imgPath = `/greenHouseImages/${fileName}`;
+    res.render('displayForms/index', { imgPath });
   }
-  imgPath = `/greenHouseImages/${fileName}`;
-  res.render('displayForms/index', { imgPath });
 });
 // greenhouse retrain page
 router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
