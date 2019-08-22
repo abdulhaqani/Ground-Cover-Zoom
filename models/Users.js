@@ -12,25 +12,20 @@ const UserSchema = new Schema({
     type: String,
     require: true,
   },
-
   firstName: {
     type: String,
   },
-
   lastName: {
     type: String,
   },
-
   email: {
     type: String,
     required: true,
   },
-
   password: {
     type: String,
     required: true,
   },
-
   date: {
     type: Date,
     default: Date.now,
