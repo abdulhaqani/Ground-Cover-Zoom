@@ -24,27 +24,31 @@ router.get('/', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/greenHouseImages')) {
     fs.mkdirSync('./public/greenHouseImages');
   }
-  let b = false;
   const fromImageFolder = './public/greenHouseImages';
-  fs.readdirSync(fromImageFolder).forEach(() => {
-    b = true;
-  });
-  if (b) {
+  if (fs.readdirSync(fromImageFolder).length > 0) {
     fs.readdirSync(fromImageFolder).forEach(file => {
-      DisplayForms.find({}, (err, displayForms) => {
-        let a = true;
-        displayForms.forEach(displayForm => {
-          // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
-          if (displayForm.FileName == file && displayForm.User == req.user.id) {
-            a = false;
-          } else {
-            fileName = file;
-          }
+      if (DisplayForms.count > 0) {
+        DisplayForms.find({}, (err, displayForms) => {
+          let a = true;
+          displayForms.forEach(displayForm => {
+            // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
+            if (
+              displayForm.FileName == file &&
+              displayForm.User == req.user.id
+            ) {
+              a = false;
+            } else {
+              fileName = file;
+            }
+          });
+          if (a == false) fileName = '';
+          imgPath = `/greenHouseImages/${fileName}`;
+          res.render('displayForms/index', { imgPath });
         });
-        if (a == false) fileName = '';
-        imgPath = `/greenHouseImages/${fileName}`;
+      } else {
+        imgPath = `/greenHouseImages/${file}`;
         res.render('displayForms/index', { imgPath });
-      });
+      }
     });
   } else {
     fileName = '';
@@ -101,16 +105,36 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
     fs.mkdirSync('./public/solarPanelImages');
   }
   const fromImageFolder = './public/solarPanelImages';
-  let i = 0;
-  fs.readdirSync(fromImageFolder).forEach(file => {
-    fileName = file;
-    i += 1;
-  });
-  if (i == 0) {
+  if (fs.readdirSync(fromImageFolder).length > 0) {
+    fs.readdirSync(fromImageFolder).forEach(file => {
+      if (DisplayForms.count > 0) {
+        DisplayForms.find({}, (err, displayForms) => {
+          let a = true;
+          displayForms.forEach(displayForm => {
+            // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
+            if (
+              displayForm.FileName == file &&
+              displayForm.User == req.user.id
+            ) {
+              a = false;
+            } else {
+              fileName = file;
+            }
+          });
+          if (a == false) fileName = '';
+          imgPath = `/solarPanelImages/${fileName}`;
+          res.render('displayForms/solarpanel', { imgPath });
+        });
+      } else {
+        imgPath = `/solarPanelImages/${file}`;
+        res.render('displayForms/solarpanel', { imgPath });
+      }
+    });
+  } else {
     fileName = '';
+    imgPath = `/solarPanelImages/${fileName}`;
+    res.render('displayForms/solarpanel', { imgPath });
   }
-  imgPath = `/solarPanelImages/${fileName}`;
-  res.render('displayForms/solarpanel', { imgPath });
 });
 // greenhouse post request
 router.post('/', ensureAuthenticated, (req, res) => {
