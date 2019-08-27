@@ -27,36 +27,25 @@ router.get('/', ensureAuthenticated, (req, res) => {
     fs.mkdirSync('./public/greenHouseImages');
   }
   const fromImageFolder = './public/greenHouseImages';
-  if (fs.readdirSync(fromImageFolder).length > 0) {
-    fs.readdirSync(fromImageFolder).forEach(file => {
-      if (DisplayForms.count > 0) {
-        DisplayForms.find({}, (err, displayForms) => {
-          let a = true;
-          displayForms.forEach(displayForm => {
-            // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
-            if (
-              displayForm.FileName == file &&
-              displayForm.User == req.user.id
-            ) {
+  fs.readdir(fromImageFolder, (err, files) => {
+    if (files.length > 0) {
+      // ****************************************
+      let a = true;
+      files.forEach(file => {
+        if (DisplayForms.count > 0) {
+          let userId = req.user.id;
+          DisplayForms.find(
+            { FileName: file, User: userId },
+            (err, displayForms) => {
               a = false;
-            } else {
-              fileName = file;
             }
-          });
-          if (a == false) fileName = '';
-          imgPath = `/greenHouseImages/${fileName}`;
-          res.render('displayForms/index', { imgPath });
-        });
-      } else {
-        imgPath = `/greenHouseImages/${file}`;
-        res.render('displayForms/index', { imgPath });
-      }
-    });
-  } else {
-    fileName = '';
+          );
+        }
+      });
+    }
     imgPath = `/greenHouseImages/${fileName}`;
     res.render('displayForms/index', { imgPath });
-  }
+  });
 });
 // greenhouse retrain page
 router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
@@ -107,36 +96,31 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
     fs.mkdirSync('./public/solarPanelImages');
   }
   const fromImageFolder = './public/solarPanelImages';
-  if (fs.readdirSync(fromImageFolder).length > 0) {
-    fs.readdirSync(fromImageFolder).forEach(file => {
-      if (DisplayForms.count > 0) {
-        DisplayForms.find({}, (err, displayForms) => {
-          let a = true;
-          displayForms.forEach(displayForm => {
-            // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
-            if (
-              displayForm.FileName == file &&
-              displayForm.User == req.user.id
-            ) {
-              a = false;
-            } else {
-              fileName = file;
-            }
+  fs.readdir(fromImageFolder, (err, files) => {
+    if (files.length > 0) {
+      let a = true;
+      files.forEach(file => {
+        if (DisplayForms.count > 0) {
+          DisplayForms.find({}, (err, displayForms) => {
+            displayForms.forEach(displayForm => {
+              // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
+              if (
+                displayForm.FileName == file &&
+                displayForm.User == req.user.id
+              )
+                a = false;
+            });
+            if (a == false) fileName = '';
+            else fileName = file;
           });
-          if (a == false) fileName = '';
-          imgPath = `/solarPanelImages/${fileName}`;
-          res.render('displayForms/solarpanel', { imgPath });
-        });
-      } else {
-        imgPath = `/solarPanelImages/${file}`;
-        res.render('displayForms/solarpanel', { imgPath });
-      }
-    });
-  } else {
-    fileName = '';
+        } else fileName = file;
+      });
+    } else {
+      fileName = '';
+    }
     imgPath = `/solarPanelImages/${fileName}`;
     res.render('displayForms/solarpanel', { imgPath });
-  }
+  });
 });
 // greenhouse post request
 router.post('/', ensureAuthenticated, (req, res) => {
@@ -165,11 +149,11 @@ router.post('/', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'greenhouse image classified');
-          Users.find(req.user.id, (err, users) => {
-            users.forEach(User => {
-              User.TotalCount += 1;
-            });
-          });
+          let userId = req.user.id;
+          Users.findOneAndUpdate(
+            { _id: userId },
+            { $inc: { TotalClassified: 1 } }
+          ).exec();
           res.redirect('/displayForms');
         })
         .catch(err => {
@@ -190,11 +174,11 @@ router.post('/', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'image classified');
-          Users.find(req.user.id, (err, users) => {
-            users.forEach(User => {
-              User.TotalCount += 1;
-            });
-          });
+          let userId = req.user.id;
+          Users.findOneAndUpdate(
+            { _id: userId },
+            { $inc: { TotalClassified: 1 } }
+          ).exec();
           res.redirect('/displayForms');
         })
         .catch(err => {
@@ -235,11 +219,11 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'solar panel image classified');
-          Users.find(req.user.id, (err, users) => {
-            users.forEach(User => {
-              User.TotalCount += 1;
-            });
-          });
+          let userId = req.user.id;
+          Users.findOneAndUpdate(
+            { _id: userId },
+            { $inc: { TotalClassified: 1 } }
+          ).exec();
           res.redirect('/displayForms/solarPanel');
         })
         .catch(err => {
@@ -260,11 +244,11 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'image classified');
-          Users.find(req.user.id, (err, users) => {
-            users.forEach(User => {
-              User.TotalCount += 1;
-            });
-          });
+          let userId = req.user.id;
+          Users.findOneAndUpdate(
+            { _id: userId },
+            { $inc: { TotalClassified: 1 } }
+          ).exec();
           res.redirect('/displayForms');
         })
         .catch(err => {
@@ -290,23 +274,20 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       lat = fileSplit[1];
       lon = fileSplit[1];
     }
-    DisplayForms.find({}, (err, displayForms) => {
+    DisplayForms.find({ FileName: fileName }, (err, displayForms) => {
       displayForms.forEach(displayForm => {
-        if (displayForm.FileName == fileName) {
-          Users.find(displayForm.user, (err, users) => {
-            users.forEach(User => {
-              if (
-                req.body.solarPanel != displayForm.solarPanel ||
-                req.body.GreenHouse != displayForm.GreenHouse
-              ) {
-                User.Misclassified += 1;
-              }
-            });
-          });
-          displayForm.remove(() => {
-            console.log('removed');
-          });
-        }
+        Users.findOne({ _id: displayForm.User }, (err, User) => {
+          // **************************************************************************************
+          if (
+            req.body.solarPanel != displayForm.solarPanel ||
+            req.body.GreenHouse != displayForm.GreenHouse
+          ) {
+            User.update({ $inc: { Misclassified: 1 } }).exec();
+          }
+        });
+        displayForm.remove(() => {
+          console.log('removed');
+        });
       });
     });
     // mongodb classification
@@ -325,7 +306,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'Image reclassified');
-          res.redirect('/displayForms/solarpanel');
+          res.redirect('/');
         })
         .catch(err => {
           throw err;
@@ -345,7 +326,12 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'image reclassified');
-          res.redirect('/displayForms/solarpanel');
+          let userId = req.user.id;
+          Users.findOneAndUpdate(
+            { _id: userId },
+            { $inc: { TotalClassified: 1 } }
+          ).exec();
+          res.redirect('/');
         })
         .catch(err => {
           throw err;
