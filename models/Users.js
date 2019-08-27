@@ -6,6 +6,9 @@ const { Schema } = mongoose;
  * fields are Organization,
  * email, password. Non-required
  * fields are First and Lastname.
+ * Date is auto generated
+ * TotalClassified and Misclassified are
+ * updated upon classifications by users.
  */
 const UserSchema = new Schema({
   organization: {
@@ -29,6 +32,14 @@ const UserSchema = new Schema({
   date: {
     type: Date,
     default: Date.now,
+  },
+  TotalClassified: {
+    type: Number,
+    default: 0,
+  },
+  Misclassified: {
+    type: Number,
+    default: 0,
   },
 });
 
