@@ -16,8 +16,10 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
 require('../models/DisplayForms');
+require('../models/Users');
 
 const DisplayForms = mongoose.model('displayForms');
+const Users = mongoose.model('users');
 
 // greenhouse page
 router.get('/', ensureAuthenticated, (req, res) => {
@@ -163,6 +165,11 @@ router.post('/', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'greenhouse image classified');
+          Users.find(req.user.id, (err, users) => {
+            users.forEach(User => {
+              User.TotalCount += 1;
+            });
+          });
           res.redirect('/displayForms');
         })
         .catch(err => {
@@ -182,7 +189,12 @@ router.post('/', ensureAuthenticated, (req, res) => {
       new DisplayForms(newClassification)
         .save()
         .then(() => {
-          req.flash('success_msg', 'no greenhouse image classified');
+          req.flash('success_msg', 'image classified');
+          Users.find(req.user.id, (err, users) => {
+            users.forEach(User => {
+              User.TotalCount += 1;
+            });
+          });
           res.redirect('/displayForms');
         })
         .catch(err => {
@@ -223,6 +235,11 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'solar panel image classified');
+          Users.find(req.user.id, (err, users) => {
+            users.forEach(User => {
+              User.TotalCount += 1;
+            });
+          });
           res.redirect('/displayForms/solarPanel');
         })
         .catch(err => {
@@ -242,7 +259,12 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
       new DisplayForms(newClassification)
         .save()
         .then(() => {
-          req.flash('success_msg', 'no solar image classified');
+          req.flash('success_msg', 'image classified');
+          Users.find(req.user.id, (err, users) => {
+            users.forEach(User => {
+              User.TotalCount += 1;
+            });
+          });
           res.redirect('/displayForms');
         })
         .catch(err => {
@@ -271,6 +293,15 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     DisplayForms.find({}, (err, displayForms) => {
       displayForms.forEach(displayForm => {
         if (displayForm.FileName == fileName) {
+          Users.find(displayForm.user, (err, users) => {
+            users.forEach(User => {
+              if (
+                req.body.solarPanel != displayForm.solarPanel ||
+                req.body.GreenHouse != displayForm.GreenHouse
+              ) {
+              }
+            });
+          });
           displayForm.remove(() => {
             console.log('removed');
           });
@@ -292,7 +323,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       new DisplayForms(newClassification)
         .save()
         .then(() => {
-          req.flash('success_msg', 'Solar Panel image classified');
+          req.flash('success_msg', 'Image reclassified');
           res.redirect('/displayForms/solarpanel');
         })
         .catch(err => {
@@ -312,7 +343,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       new DisplayForms(newClassification)
         .save()
         .then(() => {
-          req.flash('success_msg', 'no Solar Panel image classified');
+          req.flash('success_msg', 'image reclassified');
           res.redirect('/displayForms/solarpanel');
         })
         .catch(err => {
