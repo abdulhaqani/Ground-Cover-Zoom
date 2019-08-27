@@ -28,21 +28,28 @@ router.get('/', ensureAuthenticated, (req, res) => {
   }
   const fromImageFolder = './public/greenHouseImages';
   fs.readdir(fromImageFolder, (err, files) => {
+    let a = true;
+    let b = [];
     if (files.length > 0) {
-      // ****************************************
-      let a = true;
       files.forEach(file => {
         if (DisplayForms.count > 0) {
           let userId = req.user.id;
-          DisplayForms.find(
-            { FileName: file, User: userId },
-            (err, displayForms) => {
-              a = false;
-            }
-          );
+          DisplayForms.find({ User: userId }, (err, displayForms) => {
+            displayForms.forEach(displayForm => {
+              if (displayForm.FileName == file) {
+                // NOT WORKING
+                a = false;
+                console.log('test');
+              }
+            });
+          });
         }
+        if (a == true) {
+          b.push(file);
+        } else a = true;
       });
     }
+    fileName = b[0];
     imgPath = `/greenHouseImages/${fileName}`;
     res.render('displayForms/index', { imgPath });
   });
