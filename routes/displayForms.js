@@ -299,6 +299,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
                 req.body.solarPanel != displayForm.solarPanel ||
                 req.body.GreenHouse != displayForm.GreenHouse
               ) {
+                User.Misclassified += 1;
               }
             });
           });
