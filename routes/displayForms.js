@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable eqeqeq */
@@ -27,32 +28,30 @@ router.get('/', ensureAuthenticated, (req, res) => {
     fs.mkdirSync('./public/greenHouseImages');
   }
   const fromImageFolder = './public/greenHouseImages';
+  let b = [];
   fs.readdir(fromImageFolder, (err, files) => {
-    let a = true;
-    let b = [];
-    if (files.length > 0) {
-      files.forEach(file => {
-        if (DisplayForms.count > 0) {
-          let userId = req.user.id;
-          DisplayForms.find({ User: userId }, (err, displayForms) => {
-            displayForms.forEach(displayForm => {
-              if (displayForm.FileName == file) {
-                // NOT WORKING
-                a = false;
-                console.log('test');
-              }
-            });
-          });
-        }
-        if (a == true) {
-          b.push(file);
-        } else a = true;
-      });
+    files.forEach(file => {
+      b.push(file);
+    });
+  });
+  if (b.length > 0) {
+    if (DisplayForms.find({}) != null) {
+      for (let i = 0; i < b.length; i += 1) {
+        let userId = req.user.id;
+        DisplayForms.find(
+          { User: userId, FileName: b[i] },
+          (err, displayForm) => {
+            if (displayForm.FileName == b[i]) {
+              b[i] = null;
+            }
+          }
+        );
+      }
     }
     fileName = b[0];
     imgPath = `/greenHouseImages/${fileName}`;
     res.render('displayForms/index', { imgPath });
-  });
+  }
 });
 // greenhouse retrain page
 router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
