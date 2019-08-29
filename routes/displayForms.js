@@ -32,35 +32,32 @@ router.get('/', ensureAuthenticated, (req, res) => {
     files.forEach(file => {
       b.push(file);
     });
-    let c = [];
     if (b.length > 0) {
-      if (DisplayForms.find({}) != null) {
-        let userId = req.user.id;
-        DisplayForms.find({ User: userId }, (err, displayForms) => {
+      let userId = req.user.id;
+      DisplayForms.find({ User: userId }, (err, displayForms) => {
+        if (displayForms != null) {
           displayForms.forEach(displayForm => {
             for (let i = 0; i < b.length; i += 1) {
-              if (displayForm.FileName == b[i]) {
-                console.log('test');
-              } else c.push(b[i]);
+              if (displayForm.FileName == b[i]) b[i] = '';
             }
           });
-        });
-      }
-      console.log(b);
-      fileName = '';
-      for (let i = 0; i < b.length; i += 1) {
-        if (b[i] == '') {
-          console.log('nothing');
+          console.log(
+            `files that have not been classified by user ${
+              req.user.id
+            } are ${b}`
+          );
+          fileName = '';
+          for (let i = 0; i < b.length; i += 1) {
+            if (b[i] != '') fileName = b[i];
+          }
+          imgPath = `/greenHouseImages/${fileName}`;
+          res.render('displayForms/index', { imgPath });
         } else {
-          fileName = b[i];
+          fileName = '';
+          imgPath = `/greenHouseImages/${fileName}`;
+          res.render('displayForms/index', { imgPath });
         }
-      }
-      imgPath = `/greenHouseImages/${fileName}`;
-      res.render('displayForms/index', { imgPath });
-    } else {
-      fileName = '';
-      imgPath = `/greenHouseImages/${fileName}`;
-      res.render('displayForms/index', { imgPath });
+      });
     }
   });
 });
@@ -75,12 +72,7 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   DisplayForms.find({}, (err, displayForms) => {
     displayForms.forEach(displayForm => {
       if (err) throw err;
-      if (a.includes(displayForm.FileName)) {
-        c.push(displayForm);
-      } else {
-        // else put into array
-        a.push(displayForm.FileName);
-      }
+      c.push(displayForm);
     });
     // now array a has all copies
     // if no copies no file name for retraining
@@ -89,8 +81,10 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       for (let j = i; j < c.length; j += 1) {
         // if false positive or false negative
         if (
-          c[i].GreenHouse != c[j].GreenHouse ||
-          c[i].SolarPanel != c[j].SolarPanel
+          i != j &&
+          c[i].FileName == c[j].FileName &&
+          (c[i].GreenHouse != c[j].GreenHouse ||
+            c[i].SolarPanel != c[j].SolarPanel)
         ) {
           // if b doesn't already have this filename
           if (!b.includes(c[i].FileName)) b.push(c[i].FileName);
@@ -113,30 +107,38 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
     fs.mkdirSync('./public/solarPanelImages');
   }
   const fromImageFolder = './public/solarPanelImages';
+  let b = [];
   fs.readdir(fromImageFolder, (err, files) => {
-    if (files.length > 0) {
-      let a = true;
-      files.forEach(file => {
-        if (DisplayForms.count > 0) {
-          DisplayForms.find({}, (err, displayForms) => {
-            displayForms.forEach(displayForm => {
-              // if file is not already in or user isn't the same (only one needs to be true to allow to enter)
-              if (
-                displayForm.FileName == file &&
-                displayForm.User == req.user.id
-              )
-                a = false;
-            });
-            if (a == false) fileName = '';
-            else fileName = file;
+    files.forEach(file => {
+      b.push(file);
+    });
+    if (b.length > 0) {
+      let userId = req.user.id;
+      DisplayForms.find({ User: userId }, (err, displayForms) => {
+        if (displayForms != null) {
+          displayForms.forEach(displayForm => {
+            for (let i = 0; i < b.length; i += 1) {
+              if (displayForm.FileName == b[i]) b[i] = '';
+            }
           });
-        } else fileName = file;
+          console.log(
+            `files that have not been classified by user ${
+              req.user.id
+            } are ${b}`
+          );
+          fileName = '';
+          for (let i = 0; i < b.length; i += 1) {
+            if (b[i] != '') fileName = b[i];
+          }
+          imgPath = `/solarPanelImages/${fileName}`;
+          res.render('displayForms/solarpanel', { imgPath });
+        } else {
+          fileName = '';
+          imgPath = `/solarPanelImages/${fileName}`;
+          res.render('displayForms/solarpanel', { imgPath });
+        }
       });
-    } else {
-      fileName = '';
     }
-    imgPath = `/solarPanelImages/${fileName}`;
-    res.render('displayForms/solarpanel', { imgPath });
   });
 });
 // greenhouse post request
@@ -291,22 +293,32 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       lat = fileSplit[1];
       lon = fileSplit[1];
     }
+
+    // Update misclassified
+    Users.find({}, (err, users) => {
+      users.forEach(userId => {
+        DisplayForms.find(
+          { FileName: fileName, User: userId._id },
+          (err, displayForm) => {
+            if (
+              req.body.solarPanel != displayForm.solarPanel ||
+              req.body.GreenHouse != displayForm.GreenHouse
+            )
+              userId.update({ $inc: { Misclassified: 1 } }).exec();
+          }
+        );
+      });
+    });
+
+    // Remove all classified (then reclassify one)
     DisplayForms.find({ FileName: fileName }, (err, displayForms) => {
       displayForms.forEach(displayForm => {
-        Users.findOne({ _id: displayForm.User }, (err, User) => {
-          // **************************************************************************************
-          if (
-            req.body.solarPanel != displayForm.solarPanel ||
-            req.body.GreenHouse != displayForm.GreenHouse
-          ) {
-            User.update({ $inc: { Misclassified: 1 } }).exec();
-          }
-        });
         displayForm.remove(() => {
           console.log('removed');
         });
       });
     });
+
     // mongodb classification
     if (req.body.solarPanel) {
       const newClassification = {
@@ -323,7 +335,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'Image reclassified');
-          res.redirect('/');
+          res.redirect('/displayForms/greenhouseretrain');
         })
         .catch(err => {
           throw err;
@@ -348,13 +360,13 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
             { _id: userId },
             { $inc: { TotalClassified: 1 } }
           ).exec();
-          res.redirect('/');
+          res.redirect('/displayForms/greenhouseretrain');
         })
         .catch(err => {
           throw err;
         });
     }
-  }
+  } else res.redirect('/');
 });
 
 module.exports = router;
