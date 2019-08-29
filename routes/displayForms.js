@@ -66,7 +66,6 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
   if (!fs.existsSync('./public/allImages')) {
     fs.mkdirSync('./public/allImages');
   }
-  let a = [];
   let b = [];
   let c = [];
   DisplayForms.find({}, (err, displayForms) => {
