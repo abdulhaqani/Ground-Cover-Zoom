@@ -1,4 +1,3 @@
-/* eslint-disable no-loop-func */
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable eqeqeq */
@@ -33,25 +32,37 @@ router.get('/', ensureAuthenticated, (req, res) => {
     files.forEach(file => {
       b.push(file);
     });
-  });
-  if (b.length > 0) {
-    if (DisplayForms.find({}) != null) {
-      for (let i = 0; i < b.length; i += 1) {
+    let c = [];
+    if (b.length > 0) {
+      if (DisplayForms.find({}) != null) {
         let userId = req.user.id;
-        DisplayForms.find(
-          { User: userId, FileName: b[i] },
-          (err, displayForm) => {
-            if (displayForm.FileName == b[i]) {
-              b[i] = null;
+        DisplayForms.find({ User: userId }, (err, displayForms) => {
+          displayForms.forEach(displayForm => {
+            for (let i = 0; i < b.length; i += 1) {
+              if (displayForm.FileName == b[i]) {
+                console.log('test');
+              } else c.push(b[i]);
             }
-          }
-        );
+          });
+        });
       }
+      console.log(b);
+      fileName = '';
+      for (let i = 0; i < b.length; i += 1) {
+        if (b[i] == '') {
+          console.log('nothing');
+        } else {
+          fileName = b[i];
+        }
+      }
+      imgPath = `/greenHouseImages/${fileName}`;
+      res.render('displayForms/index', { imgPath });
+    } else {
+      fileName = '';
+      imgPath = `/greenHouseImages/${fileName}`;
+      res.render('displayForms/index', { imgPath });
     }
-    fileName = b[0];
-    imgPath = `/greenHouseImages/${fileName}`;
-    res.render('displayForms/index', { imgPath });
-  }
+  });
 });
 // greenhouse retrain page
 router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
