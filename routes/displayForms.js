@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 
+// variables
 let fileName = '';
 let imgPath = '';
 const router = express.Router();
@@ -15,27 +16,35 @@ const { ensureAuthenticated } = require('../helpers/auth');
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
+// bringing in the models
 require('../models/DisplayForms');
 require('../models/Users');
 
+// Model variables
 const DisplayForms = mongoose.model('displayForms');
 const Users = mongoose.model('users');
 
 // greenhouse page
 router.get('/', ensureAuthenticated, (req, res) => {
+  // create dir to prevent errors
   if (!fs.existsSync('./public/greenHouseImages')) {
     fs.mkdirSync('./public/greenHouseImages');
   }
   const fromImageFolder = './public/greenHouseImages';
   let b = [];
   fs.readdir(fromImageFolder, (err, files) => {
+    // add file names to array
     files.forEach(file => {
       b.push(file);
     });
+    // if there are file names
     if (b.length > 0) {
       let userId = req.user.id;
+      // find in the database based on current user
       DisplayForms.find({ User: userId }, (err, displayForms) => {
+        // if there are values to based on the query
         if (displayForms != null) {
+          // for each query result, if the FileName is the same then set fileName to '' because the user already classified it
           displayForms.forEach(displayForm => {
             for (let i = 0; i < b.length; i += 1) {
               if (displayForm.FileName == b[i]) b[i] = '';
@@ -61,16 +70,65 @@ router.get('/', ensureAuthenticated, (req, res) => {
     }
   });
 });
+
+// solar panel display form page
+router.get('/solarpanel', ensureAuthenticated, (req, res) => {
+  // create dir to prevent errors
+  if (!fs.existsSync('./public/solarPanelImages')) {
+    fs.mkdirSync('./public/solarPanelImages');
+  }
+  const fromImageFolder = './public/solarPanelImages';
+  let b = [];
+  // add file names to array
+  fs.readdir(fromImageFolder, (err, files) => {
+    files.forEach(file => {
+      b.push(file);
+    });
+    // if there is at least 1 file
+    if (b.length > 0) {
+      let userId = req.user.id;
+      // db search query
+      DisplayForms.find({ User: userId }, (err, displayForms) => {
+        // if results from query compare fileNames, if the same then edit array
+        if (displayForms != null) {
+          displayForms.forEach(displayForm => {
+            for (let i = 0; i < b.length; i += 1) {
+              if (displayForm.FileName == b[i]) b[i] = '';
+            }
+          });
+          console.log(
+            `files that have not been classified by user ${
+              req.user.id
+            } are ${b}`
+          );
+          fileName = '';
+          // if array only has empty file names, the user already classified it
+          for (let i = 0; i < b.length; i += 1) {
+            if (b[i] != '') fileName = b[i];
+          }
+          imgPath = `/solarPanelImages/${fileName}`;
+          res.render('displayForms/solarpanel', { imgPath });
+        } else {
+          fileName = '';
+          imgPath = `/solarPanelImages/${fileName}`;
+          res.render('displayForms/solarpanel', { imgPath });
+        }
+      });
+    }
+  });
+});
+
 // greenhouse retrain page
 router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
+  // create dir to prevent errors
   if (!fs.existsSync('./public/allImages')) {
     fs.mkdirSync('./public/allImages');
   }
   let b = [];
   let c = [];
   DisplayForms.find({}, (err, displayForms) => {
+    if (err) throw err;
     displayForms.forEach(displayForm => {
-      if (err) throw err;
       c.push(displayForm);
     });
     // now array a has all copies
@@ -100,46 +158,7 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     res.render('displayForms/greenhouseretrain', { imgPath });
   });
 });
-// solar panel display form page
-router.get('/solarpanel', ensureAuthenticated, (req, res) => {
-  if (!fs.existsSync('./public/solarPanelImages')) {
-    fs.mkdirSync('./public/solarPanelImages');
-  }
-  const fromImageFolder = './public/solarPanelImages';
-  let b = [];
-  fs.readdir(fromImageFolder, (err, files) => {
-    files.forEach(file => {
-      b.push(file);
-    });
-    if (b.length > 0) {
-      let userId = req.user.id;
-      DisplayForms.find({ User: userId }, (err, displayForms) => {
-        if (displayForms != null) {
-          displayForms.forEach(displayForm => {
-            for (let i = 0; i < b.length; i += 1) {
-              if (displayForm.FileName == b[i]) b[i] = '';
-            }
-          });
-          console.log(
-            `files that have not been classified by user ${
-              req.user.id
-            } are ${b}`
-          );
-          fileName = '';
-          for (let i = 0; i < b.length; i += 1) {
-            if (b[i] != '') fileName = b[i];
-          }
-          imgPath = `/solarPanelImages/${fileName}`;
-          res.render('displayForms/solarpanel', { imgPath });
-        } else {
-          fileName = '';
-          imgPath = `/solarPanelImages/${fileName}`;
-          res.render('displayForms/solarpanel', { imgPath });
-        }
-      });
-    }
-  });
-});
+
 // greenhouse post request
 router.post('/', ensureAuthenticated, (req, res) => {
   if (fileName != '') {
@@ -267,7 +286,7 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
             { _id: userId },
             { $inc: { TotalClassified: 1 } }
           ).exec();
-          res.redirect('/displayForms');
+          res.redirect('/displayForms/solarPanel');
         })
         .catch(err => {
           throw err;
@@ -296,14 +315,16 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     // Update misclassified
     Users.find({}, (err, users) => {
       users.forEach(userId => {
-        DisplayForms.find(
+        DisplayForms.findOne(
           { FileName: fileName, User: userId._id },
           (err, displayForm) => {
             if (
               req.body.solarPanel != displayForm.solarPanel ||
               req.body.GreenHouse != displayForm.GreenHouse
-            )
-              userId.update({ $inc: { Misclassified: 1 } }).exec();
+            ) {
+              if (userId._id == displayForm.User)
+                userId.update({ $inc: { Misclassified: 1 } }).exec();
+            }
           }
         );
       });
@@ -311,11 +332,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
 
     // Remove all classified (then reclassify one)
     DisplayForms.find({ FileName: fileName }, (err, displayForms) => {
-      displayForms.forEach(displayForm => {
-        displayForm.remove(() => {
-          console.log('removed');
-        });
-      });
+      displayForms.forEach(displayForm => displayForm.remove());
     });
 
     // mongodb classification
@@ -339,7 +356,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .catch(err => {
           throw err;
         });
-    } else {
+    } else if (req.body.greenHouse) {
       const newClassification = {
         FileName: fileName,
         Classified: true,
@@ -354,11 +371,26 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .save()
         .then(() => {
           req.flash('success_msg', 'image reclassified');
-          let userId = req.user.id;
-          Users.findOneAndUpdate(
-            { _id: userId },
-            { $inc: { TotalClassified: 1 } }
-          ).exec();
+          res.redirect('/displayForms/greenhouseretrain');
+        })
+        .catch(err => {
+          throw err;
+        });
+    } else {
+      const newClassification = {
+        FileName: fileName,
+        Classified: true,
+        SolarPanel: false,
+        GreenHouse: false,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'image reclassified');
           res.redirect('/displayForms/greenhouseretrain');
         })
         .catch(err => {
