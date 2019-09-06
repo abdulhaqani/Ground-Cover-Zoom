@@ -103,6 +103,10 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
+app.get('/contact', (req, res) => {
+  res.render('contact');
+});
+
 // use routes
 app.use('/displayForms', displayForms);
 app.use('/users', users);

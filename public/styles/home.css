@@ -51,3 +51,47 @@ footer {
   padding: 10px 10px;
   font-size: 12px;
 }
+
+.mail {
+  text-decoration-line: underline;
+}
+
+.contactTitle {
+  text-decoration-line: underline;
+}
+.column.contact {
+  float: left;
+  width: 23%;
+  margin: 1%;
+}
+
+h4 {
+  text-decoration-line: underline;
+}
+
+/* Clear floats after the columns */
+.row.contact.after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
+
+.timesNewRoman {
+  font-family: "Times New Roman", Times, serif;
+}
+
+.contactHead {
+  margin: 10%;
+  margin-top: 2%;
+}
+
+.contactP {
+  font-size: 14px;
+}
