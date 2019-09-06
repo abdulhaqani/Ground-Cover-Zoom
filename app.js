@@ -22,9 +22,12 @@ const users = require('./routes/users');
 require('./models/Users');
 require('./models/DisplayForms');
 
+// db config
+const db = require('./config/database');
+
 // connect to mongoose
 mongoose
-  .connect('mongodb://127.0.0.1/greenhouse-dev', {
+  .connect(db.mongoURI, {
     useNewUrlParser: true,
   })
   .then(() => console.log('connected to mongodb'))
