@@ -40,6 +40,7 @@ const User = mongoose.model('users');
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
 
+// connections
 mongoose.connection
   .once('open', () => {
     console.log('connected to greenhouse-dev');
