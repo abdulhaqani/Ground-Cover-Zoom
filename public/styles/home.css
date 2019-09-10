@@ -47,7 +47,6 @@ header:hover {
 footer {
   background: lightgrey;
   color: black;
-  text-align: center;
   padding: 10px 10px;
   font-size: 12px;
 }
@@ -69,6 +68,9 @@ h4 {
   text-decoration-line: underline;
 }
 
+.footerTitle {
+  text-decoration-line: underline;
+}
 /* Clear floats after the columns */
 .row.contact.after {
   content: "";
