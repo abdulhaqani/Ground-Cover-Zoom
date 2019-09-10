@@ -59,10 +59,10 @@ footer {
 .contactTitle {
   text-decoration-line: underline;
 }
-.column.contact {
-  float: left;
-  width: 23%;
-  margin: 1%;
+.flexbox.contact {
+  float: center;
+  margin: 5%;
+  margin-top: 0%;
 }
 
 h4 {
