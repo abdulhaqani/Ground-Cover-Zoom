@@ -59,14 +59,22 @@ router.get('/', ensureAuthenticated, (req, res) => {
           for (let i = 0; i < b.length; i += 1) {
             if (b[i] != '') fileName = b[i];
           }
-          imgPath = `/greenHouseImages/${fileName}`;
-          res.render('displayForms/index', { imgPath });
+          if (fileName == '') {
+            imgPath = `/images/noImage.png`;
+            res.render('displayforms/index', { imgPath });
+          } else {
+            imgPath = `/greenHouseImages/${fileName}`;
+            res.render('displayForms/index', { imgPath });
+          }
         } else {
           fileName = '';
           imgPath = `/greenHouseImages/${fileName}`;
           res.render('displayForms/index', { imgPath });
         }
       });
+    } else {
+      imgPath = `/images/noImage.png`;
+      res.render('displayforms/index', { imgPath });
     }
   });
 });
@@ -106,14 +114,21 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
           for (let i = 0; i < b.length; i += 1) {
             if (b[i] != '') fileName = b[i];
           }
-          imgPath = `/solarPanelImages/${fileName}`;
-          res.render('displayForms/solarpanel', { imgPath });
+          if (fileName == '') {
+            imgPath = `/images/noImage.png`;
+            res.render('displayforms/solarpanel', { imgPath });
+          } else {
+            imgPath = `/solarPanelImages/${fileName}`;
+            res.render('displayForms/solarpanel', { imgPath });
+          }
         } else {
-          fileName = '';
-          imgPath = `/solarPanelImages/${fileName}`;
-          res.render('displayForms/solarpanel', { imgPath });
+          imgPath = `/images/noImage.png`;
+          res.render('displayforms/solarpanel', { imgPath });
         }
       });
+    } else {
+      imgPath = `/images/noImage.png`;
+      res.render('displayforms/solarpanel', { imgPath });
     }
   });
 });
@@ -149,13 +164,14 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
       }
     }
     if (b.length == 0) {
-      fileName = '';
+      imgPath = `/images/noImage.png`;
+      res.render('displayForms/greenhouseretrain', { imgPath });
     } else {
       // just chose first element because it shouldn't matter which copy is present. Once post is called it will be removed
       fileName = b[0];
+      imgPath = `/allImages/${fileName}`;
+      res.render('displayForms/greenhouseretrain', { imgPath });
     }
-    imgPath = `/allImages/${fileName}`;
-    res.render('displayForms/greenhouseretrain', { imgPath });
   });
 });
 
