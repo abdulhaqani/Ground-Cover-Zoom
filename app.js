@@ -21,7 +21,7 @@ const users = require('./routes/users');
 // require models
 require('./models/Users');
 require('./models/DisplayForms');
-
+require('./models/Comment');
 // db config
 const db = require('./config/database');
 
@@ -34,8 +34,7 @@ mongoose
   .catch(err => console.log(err));
 
 // model instance
-const Display = mongoose.model('displayForms');
-const User = mongoose.model('users');
+const Comments = mongoose.model('comment');
 
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
@@ -104,13 +103,34 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
-app.get('/contact', (req, res) => {
-  res.render('contact');
+app.get('/about', (req, res) => {
+  res.render('about');
 });
 
 // use routes
 app.use('/displayForms', displayForms);
 app.use('/users', users);
+
+// Comments
+app.post('/comments', (req, res) => {
+  if (req.body.shortComments !== 'comment here') {
+    const newComment = {
+      comment: 'test',
+    };
+    new Comments(newComment)
+      .save()
+      .then(() => {
+        res.redirect('back');
+        req.flash('success_msg', 'Comment submitted');
+      })
+      .catch(err => {
+        throw err;
+      });
+  } else {
+    console.log('test');
+    res.redirect('back');
+  }
+});
 
 // listen
 app.listen(app.get('port'), () => {
