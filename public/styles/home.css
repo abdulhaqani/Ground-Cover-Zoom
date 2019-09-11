@@ -97,3 +97,7 @@ h4 {
 .contactP {
   font-size: 14px;
 }
+
+.footerColumn {
+  margin: auto;
+}
