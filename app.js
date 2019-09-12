@@ -22,6 +22,9 @@ const users = require('./routes/users');
 require('./models/Users');
 require('./models/DisplayForms');
 require('./models/Comment');
+
+// model instance
+const Comments = mongoose.model('comments');
 // db config
 const db = require('./config/database');
 
@@ -32,9 +35,6 @@ mongoose
   })
   .then(() => console.log('connected to mongodb'))
   .catch(err => console.log(err));
-
-// model instance
-const Comments = mongoose.model('comment');
 
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
@@ -107,30 +107,30 @@ app.get('/about', (req, res) => {
   res.render('about');
 });
 
-// use routes
-app.use('/displayForms', displayForms);
-app.use('/users', users);
-
 // Comments
 app.post('/comments', (req, res) => {
-  if (req.body.shortComments !== 'comment here') {
+  if (req.body.comments !== 'comment here') {
     const newComment = {
-      comment: 'test',
+      Comment: req.body.comments,
     };
     new Comments(newComment)
       .save()
       .then(() => {
         res.redirect('back');
+        console.log(newComment);
         req.flash('success_msg', 'Comment submitted');
       })
       .catch(err => {
         throw err;
       });
   } else {
-    console.log('test');
     res.redirect('back');
   }
 });
+
+// use routes
+app.use('/displayForms', displayForms);
+app.use('/users', users);
 
 // listen
 app.listen(app.get('port'), () => {
