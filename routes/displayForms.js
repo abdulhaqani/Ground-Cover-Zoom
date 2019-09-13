@@ -27,13 +27,14 @@ const Users = mongoose.model('users');
 // greenhouse page
 router.get('/', ensureAuthenticated, (req, res) => {
   // create dir to prevent errors
-  if (!fs.existsSync('./public/greenHouseImages')) {
-    fs.mkdirSync('./public/greenHouseImages');
+  if (!fs.existsSync('./public/allImages')) {
+    fs.mkdirSync('./public/allImages');
   }
-  const fromImageFolder = './public/greenHouseImages';
+  const fromImageFolder = './public/allImages';
   let b = [];
   fs.readdir(fromImageFolder, (err, files) => {
     // add file names to array
+
     files.forEach(file => {
       b.push(file);
     });
@@ -47,7 +48,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
           // for each query result, if the FileName is the same then set fileName to '' because the user already classified it
           displayForms.forEach(displayForm => {
             for (let i = 0; i < b.length; i += 1) {
-              if (displayForm.FileName == b[i]) b[i] = '';
+              if (displayForm.FileName == b[i] && displayForm.ClassifiedGreenhouse == 'true') b[i] = '';
             }
           });
           console.log(
@@ -63,13 +64,12 @@ router.get('/', ensureAuthenticated, (req, res) => {
             imgPath = `/images/noImage.png`;
             res.render('displayforms/index', { imgPath });
           } else {
-            imgPath = `/greenHouseImages/${fileName}`;
+            imgPath = `/allImages/${fileName}`;
             res.render('displayForms/index', { imgPath });
           }
         } else {
-          fileName = '';
-          imgPath = `/greenHouseImages/${fileName}`;
-          res.render('displayForms/index', { imgPath });
+          imgPath = `/images/noImage.png`;
+          res.render('displayforms/solarpanel', { imgPath });
         }
       });
     } else {
@@ -82,10 +82,10 @@ router.get('/', ensureAuthenticated, (req, res) => {
 // solar panel display form page
 router.get('/solarpanel', ensureAuthenticated, (req, res) => {
   // create dir to prevent errors
-  if (!fs.existsSync('./public/solarPanelImages')) {
-    fs.mkdirSync('./public/solarPanelImages');
+  if (!fs.existsSync('./public/allImages')) {
+    fs.mkdirSync('./public/allImages');
   }
-  const fromImageFolder = './public/solarPanelImages';
+  const fromImageFolder = './public/allImages';
   let b = [];
   // add file names to array
   fs.readdir(fromImageFolder, (err, files) => {
@@ -101,7 +101,7 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
         if (displayForms != null) {
           displayForms.forEach(displayForm => {
             for (let i = 0; i < b.length; i += 1) {
-              if (displayForm.FileName == b[i]) b[i] = '';
+              if (displayForm.FileName == b[i] && displayForm.ClassifiedSolarPanel == 'true') b[i] = '';
             }
           });
           console.log(
@@ -118,7 +118,7 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
             imgPath = `/images/noImage.png`;
             res.render('displayforms/solarpanel', { imgPath });
           } else {
-            imgPath = `/solarPanelImages/${fileName}`;
+            imgPath = `/allImages/${fileName}`;
             res.render('displayForms/solarpanel', { imgPath });
           }
         } else {
@@ -155,12 +155,24 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         if (
           i != j &&
           c[i].FileName == c[j].FileName &&
-          (c[i].GreenHouse != c[j].GreenHouse ||
-            c[i].SolarPanel != c[j].SolarPanel)
+          c[i].ClassifiedGreenhouse == 'true' && 
+          c[j].ClassifiedGreenhouse == 'true' && 
+          (c[i].GreenHouse != c[j].GreenHouse)
         ) {
           // if b doesn't already have this filename
           if (!b.includes(c[i].FileName)) b.push(c[i].FileName);
         }
+        if (
+          i != j &&
+          c[i].FileName == c[j].FileName &&
+          c[i].ClassifiedSolarPanel == 'true' && 
+          c[j].ClassifiedSolarPanel == 'true' && 
+          (c[i].SolarPanel != c[j].SolarPanel)
+        ) {
+          // if b doesn't already have this filename
+          if (!b.includes(c[i].FileName)) b.push(c[i].FileName);
+        }
+        
       }
     }
     if (b.length == 0) {
@@ -190,8 +202,9 @@ router.post('/', ensureAuthenticated, (req, res) => {
     if (req.body.greenHouse) {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
-        SolarPanel: false,
+        ClassifiedGreenhouse: 'true',
+        ClassifiedSolarPanel: 'false',
+        SolarPanel: 'N/a',
         GreenHouse: true,
         User: req.user.id,
         Zoom: zoom,
@@ -215,8 +228,9 @@ router.post('/', ensureAuthenticated, (req, res) => {
     } else {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
-        SolarPanel: false,
+        ClassifiedGreenhouse: 'true',
+        ClassifiedSolarPanel: 'false',
+        SolarPanel: 'N/a',
         GreenHouse: false,
         User: req.user.id,
         Zoom: zoom,
@@ -260,9 +274,10 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
     if (req.body.greenHouse) {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
+        ClassifiedGreenhouse: 'false',
+        ClassifiedSolarPanel: 'true',
         SolarPanel: true,
-        GreenHouse: false,
+        GreenHouse: 'N/a',
         User: req.user.id,
         Zoom: zoom,
         Lat: lat,
@@ -285,9 +300,10 @@ router.post('/solarpanel', ensureAuthenticated, (req, res) => {
     } else {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
+        ClassifiedGreenhouse: 'false',
+        ClassifiedSolarPanel: 'true',
         SolarPanel: false,
-        GreenHouse: false,
+        GreenHouse: 'N/a',
         User: req.user.id,
         Zoom: zoom,
         Lat: lat,
@@ -335,8 +351,10 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
           { FileName: fileName, User: userId._id },
           (err, displayForm) => {
             if (
-              req.body.solarPanel != displayForm.solarPanel ||
-              req.body.GreenHouse != displayForm.GreenHouse
+              (req.body.solarPanel != displayForm.solarPanel && 
+              req.body.ClassifiedSolarPanel == displayForm.ClassifiedSolarPanel) ||
+              req.body.GreenHouse != displayForm.GreenHouse && 
+              req.body.ClassifiedGreenhouse == displayForm.ClassifiedGreenhouse
             ) {
               if (userId._id == displayForm.User)
                 userId.update({ $inc: { Misclassified: 1 } }).exec();
@@ -355,7 +373,8 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     if (req.body.solarPanel) {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
+        ClassifiedGreenhouse: 'true',
+        ClassifiedSolarPanel: 'true',
         SolarPanel: false,
         GreenHouse: true,
         User: req.user.id,
@@ -375,7 +394,8 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
     } else if (req.body.greenHouse) {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
+        ClassifiedGreenhouse: 'true',
+        ClassifiedSolarPanel: 'true',
         SolarPanel: false,
         GreenHouse: true,
         User: req.user.id,
@@ -392,10 +412,32 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .catch(err => {
           throw err;
         });
-    } else {
+    } else if (req.body.both) {
       const newClassification = {
         FileName: fileName,
-        Classified: true,
+        ClassifiedGreenhouse: 'true',
+        ClassifiedSolarPanel: 'true',
+        SolarPanel: true,
+        GreenHouse: true,
+        User: req.user.id,
+        Zoom: zoom,
+        Lat: lat,
+        Lon: lon,
+      };
+      new DisplayForms(newClassification)
+        .save()
+        .then(() => {
+          req.flash('success_msg', 'image reclassified');
+          res.redirect('/displayForms/greenhouseretrain');
+        })
+        .catch(err => {
+          throw err;
+        });
+      } else {
+      const newClassification = {
+        FileName: fileName,
+        ClassifiedGreenhouse: 'true',
+        ClassifiedSolarPanel: 'true',
         SolarPanel: false,
         GreenHouse: false,
         User: req.user.id,

@@ -11,7 +11,11 @@ const DisplaySchema = new Schema({
     type: String,
     required: true,
   },
-  Classified: {
+  ClassifiedSolarPanel: {
+    type: String,
+    required: true,
+  },
+  ClassifiedGreenhouse: {
     type: String,
     required: true,
   },
@@ -32,6 +36,7 @@ const DisplaySchema = new Schema({
   Zoom: {
     type: String,
   },
+
 });
 
 mongoose.model('displayForms', DisplaySchema);
