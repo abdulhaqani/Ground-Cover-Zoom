@@ -73,7 +73,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
           }
         } else {
           imgPath = `/images/noImage.png`;
-          res.render('displayforms/solarpanel', { imgPath });
+          res.render('displayforms/index', { imgPath });
         }
       });
     } else {
