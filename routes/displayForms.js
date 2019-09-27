@@ -48,7 +48,11 @@ router.get('/', ensureAuthenticated, (req, res) => {
           // for each query result, if the FileName is the same then set fileName to '' because the user already classified it
           displayForms.forEach(displayForm => {
             for (let i = 0; i < b.length; i += 1) {
-              if (displayForm.FileName == b[i] && displayForm.ClassifiedGreenhouse == 'true') b[i] = '';
+              if (
+                displayForm.FileName == b[i] &&
+                displayForm.ClassifiedGreenhouse == 'true'
+              )
+                b[i] = '';
             }
           });
           console.log(
@@ -101,7 +105,11 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
         if (displayForms != null) {
           displayForms.forEach(displayForm => {
             for (let i = 0; i < b.length; i += 1) {
-              if (displayForm.FileName == b[i] && displayForm.ClassifiedSolarPanel == 'true') b[i] = '';
+              if (
+                displayForm.FileName == b[i] &&
+                displayForm.ClassifiedSolarPanel == 'true'
+              )
+                b[i] = '';
             }
           });
           console.log(
@@ -155,9 +163,9 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         if (
           i != j &&
           c[i].FileName == c[j].FileName &&
-          c[i].ClassifiedGreenhouse == 'true' && 
-          c[j].ClassifiedGreenhouse == 'true' && 
-          (c[i].GreenHouse != c[j].GreenHouse)
+          c[i].ClassifiedGreenhouse == 'true' &&
+          c[j].ClassifiedGreenhouse == 'true' &&
+          c[i].GreenHouse != c[j].GreenHouse
         ) {
           // if b doesn't already have this filename
           if (!b.includes(c[i].FileName)) b.push(c[i].FileName);
@@ -165,14 +173,13 @@ router.get('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         if (
           i != j &&
           c[i].FileName == c[j].FileName &&
-          c[i].ClassifiedSolarPanel == 'true' && 
-          c[j].ClassifiedSolarPanel == 'true' && 
-          (c[i].SolarPanel != c[j].SolarPanel)
+          c[i].ClassifiedSolarPanel == 'true' &&
+          c[j].ClassifiedSolarPanel == 'true' &&
+          c[i].SolarPanel != c[j].SolarPanel
         ) {
           // if b doesn't already have this filename
           if (!b.includes(c[i].FileName)) b.push(c[i].FileName);
         }
-        
       }
     }
     if (b.length == 0) {
@@ -351,10 +358,12 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
           { FileName: fileName, User: userId._id },
           (err, displayForm) => {
             if (
-              (req.body.solarPanel != displayForm.solarPanel && 
-              req.body.ClassifiedSolarPanel == displayForm.ClassifiedSolarPanel) ||
-              req.body.GreenHouse != displayForm.GreenHouse && 
-              req.body.ClassifiedGreenhouse == displayForm.ClassifiedGreenhouse
+              (req.body.solarPanel != displayForm.solarPanel &&
+                req.body.ClassifiedSolarPanel ==
+                  displayForm.ClassifiedSolarPanel) ||
+              (req.body.GreenHouse != displayForm.GreenHouse &&
+                req.body.ClassifiedGreenhouse ==
+                  displayForm.ClassifiedGreenhouse)
             ) {
               if (userId._id == displayForm.User)
                 userId.update({ $inc: { Misclassified: 1 } }).exec();
@@ -433,7 +442,7 @@ router.post('/greenhouseretrain', ensureAuthenticated, (req, res) => {
         .catch(err => {
           throw err;
         });
-      } else {
+    } else {
       const newClassification = {
         FileName: fileName,
         ClassifiedGreenhouse: 'true',
