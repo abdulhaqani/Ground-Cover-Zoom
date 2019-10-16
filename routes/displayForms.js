@@ -72,7 +72,10 @@ router.get('/', ensureAuthenticated, (req, res) => {
             res.render('displayForms/index', { imgPath });
           }
         } else {
-          imgPath = `/images/noImage.png`;
+          for (let i = 0; i < b.length; i += 1) {
+            if (b[i] != '') fileName = b[i];
+          }
+          imgPath = `/allImages/${fileName}`;
           res.render('displayforms/index', { imgPath });
         }
       });
@@ -130,7 +133,10 @@ router.get('/solarpanel', ensureAuthenticated, (req, res) => {
             res.render('displayForms/solarpanel', { imgPath });
           }
         } else {
-          imgPath = `/images/noImage.png`;
+          for (let i = 0; i < b.length; i += 1) {
+            if (b[i] != '') fileName = b[i];
+          }
+          imgPath = `/allImages/${fileName}`;
           res.render('displayforms/solarpanel', { imgPath });
         }
       });
